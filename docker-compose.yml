@@ -1,0 +1,6 @@
+﻿services:
+  central-server:
+    image: central-server
+    build:
+      context: .
+      dockerfile: Central-Server/Dockerfile
