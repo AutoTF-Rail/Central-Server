@@ -1,6 +1,6 @@
 ﻿services:
   central-server:
-    image: central-server
+    image: central-server:latest
     restart: unless-stopped
     ports:
       - "7480:8080"
