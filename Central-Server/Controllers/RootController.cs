@@ -2,12 +2,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Central_Server.Controllers;
 
-[Route("/meow")]
+[Route("/")]
 public class RootController : ControllerBase
+{
+	[HttpGet("/")]
+	public IActionResult Index()
+	{
+		return Content("Bluba");
+	}
+}
+[Route("/meow")]
+public class MeowController : ControllerBase
 {
 	private readonly FileAccess _fileAccess;
 
-	public RootController(FileAccess fileAccess)
+	public MeowController(FileAccess fileAccess)
 	{
 		_fileAccess = fileAccess;
 	}
