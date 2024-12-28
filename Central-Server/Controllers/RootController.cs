@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Central_Server.Controllers;
 
-[Route("/")]
+[Route("/meow")]
 public class RootController : ControllerBase
 {
-	[HttpGet("/")]
+	[HttpGet("/meow")]
 	public IActionResult Index()
 	{
 		return Content("Meow");
