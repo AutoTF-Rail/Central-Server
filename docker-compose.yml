@@ -1,5 +1,6 @@
 ﻿services:
   central-server:
+    container_name: CentralServer-INSERTEVUNAME
     image: central-server:latest
     restart: unless-stopped
     ports:
@@ -9,4 +10,4 @@
       context: .
       dockerfile: Central-Server/Dockerfile
     volumes:
-      - /etc/AutoTf/CentralServer:/Data
+      - /etc/AutoTf/CentralServer/INSERTEVUNAME:/Data
