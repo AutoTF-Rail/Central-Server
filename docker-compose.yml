@@ -1,6 +1,12 @@
 ﻿services:
   central-server:
     image: central-server
+    restart: unless-stopped
+    ports:
+      - "7480:8080"
+      - "7481:8081"
     build:
       context: .
       dockerfile: Central-Server/Dockerfile
+    volumes:
+      - /etc/AutoTf/CentralServer:/Data
