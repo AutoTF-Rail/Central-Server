@@ -5,7 +5,7 @@ namespace Central_Server.Controllers;
 [Route("/meow")]
 public class RootController : ControllerBase
 {
-	[HttpGet("/meow")]
+	[HttpGet("meow")]
 	public IActionResult Index()
 	{
 		return Content("Meow");
