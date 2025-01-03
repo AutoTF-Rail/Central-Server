@@ -27,6 +27,7 @@ public class Program
 
 		app.UseAuthorization();
 
+		app.UseDefaultFiles();
 		app.UseStaticFiles();
 		
 		app.MapControllers();
