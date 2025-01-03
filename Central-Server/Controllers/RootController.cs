@@ -5,7 +5,7 @@ namespace Central_Server.Controllers;
 [Route("/")]
 public class RootController : ControllerBase
 {
-	[HttpGet("/")]
+	[HttpGet("/Bluba")]
 	public IActionResult Index()
 	{
 		return Content("Bluba");
