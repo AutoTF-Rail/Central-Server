@@ -9,7 +9,8 @@ public class Program
 		// Add services to the container.
 
 		builder.Services.AddControllers();
-		builder.Services.AddSingleton(new FileAccess());
+		FileAccess acc = new FileAccess();
+		builder.Services.AddSingleton(acc);
 		// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 		builder.Services.AddEndpointsApiExplorer();
 		builder.Services.AddSwaggerGen();
@@ -32,6 +33,7 @@ public class Program
 		
 		app.MapControllers();
 
+		Console.WriteLine("Starting for EVU: " + acc.GetEvuName());
 		app.Run();
 	}
 }

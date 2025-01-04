@@ -5,6 +5,9 @@ namespace Central_Server;
 public class FileAccess
 {
 	private readonly string _dataDir;
+
+	private readonly string? _evuName;
+	
 	public FileAccess()
 	{
 #if RELEASE
@@ -13,8 +16,14 @@ public class FileAccess
 		_dataDir = Path.Combine(SpecialDirectories.MyDocuments, "AutoTf/CentralServer");
 		Directory.CreateDirectory(_dataDir);
 #endif
+		_evuName = Environment.GetEnvironmentVariable("evuName");
 	}
 
+	public string GetEvuName()
+	{
+		return _evuName;
+	}
+	
 	public bool ReadFile(string fileName, out string content)
 	{
 		content = "";

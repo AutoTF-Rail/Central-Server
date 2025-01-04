@@ -11,3 +11,5 @@
       dockerfile: Central-Server/Dockerfile
     volumes:
       - /etc/AutoTf/CentralServer/INSERTEVUNAME:/Data
+    environment:
+      evuName: "INSERTEVUNAME"
