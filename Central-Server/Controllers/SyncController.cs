@@ -26,7 +26,7 @@ public class SyncController : ControllerBase
 			
 			
 			Console.WriteLine($"SYNC: {device} requested to upload logs.");
-			_fileAccess.AppendAllLines(Path.Combine("logs", device, DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
+			_fileAccess.AppendAllLines(Path.Combine("Logs", device, DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
 				logs);
 			
 			Console.WriteLine($"SYNC: Successfully uploaded logs for {device}.");

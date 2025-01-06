@@ -44,6 +44,7 @@ public class FileAccess
 	public void AppendAllLines(string fileName, string[] content)
 	{
 		string path = Path.Combine(_dataDir, fileName);
+		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 		File.AppendAllLines(path, content);
 	}
 }
