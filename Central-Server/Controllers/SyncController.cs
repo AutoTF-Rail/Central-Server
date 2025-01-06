@@ -11,6 +11,12 @@ public class SyncController : ControllerBase
 	{
 		_fileAccess = fileAccess;
 	}
+
+	[HttpGet("macAddress")]
+	public IActionResult SyncMacAddresses()
+	{
+		return Content("");
+	}
 	
 	[HttpPost("uploadlogs")]
 	public IActionResult UploadLogs([FromBody]string[] logs)
