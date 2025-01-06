@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 
 namespace Central_Server.Controllers;
 
@@ -9,12 +8,18 @@ public class SyncController : ControllerBase
 	[HttpPost("uploadlogs")]
 	public IActionResult UploadLogs()
 	{
-		Console.WriteLine(Request.Headers.Authorization);
-		foreach (KeyValuePair<string,StringValues> keyValuePair in Request.Headers)
+		try
 		{
-			Console.WriteLine(keyValuePair.Key);
-			Console.WriteLine(keyValuePair.Value);
+			Console.WriteLine(Request.Headers["X-Authentik-Username"] + " requested to upload logs.");
+		
+			return Ok();
 		}
-		return Ok();
+		catch (Exception e)
+		{
+			Console.WriteLine("ERROR: Could not upload logs:");
+			Console.WriteLine(e.Message);
+		}
+
+		return BadRequest();
 	}
 }
