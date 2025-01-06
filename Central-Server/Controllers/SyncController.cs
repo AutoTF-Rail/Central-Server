@@ -90,7 +90,7 @@ public class SyncController : ControllerBase
 
 			string[] files = _fileAccess.GetFiles(dir);
 
-			return Content(JsonSerializer.Serialize(files.Select(file => file.Replace(".txt", ""))));
+			return Content(JsonSerializer.Serialize(files.Select(Path.GetFileNameWithoutExtension)));
 		}
 		catch (Exception e)
 		{
