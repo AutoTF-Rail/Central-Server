@@ -18,16 +18,17 @@ public class SyncController : ControllerBase
 
 	// This has to be reported every 5 minutes, otherwise a device will be marked as offline/no signal/not found (idk yet)
 	// deviceInfo: 
-	// 1: device username
-	// 2: status
+	// 1: status
 	[HttpPost("updatestatus")]
-	public IActionResult UpdateStatus([FromBody]string[] deviceInfo)
+	public IActionResult UpdateStatus([FromBody]string deviceStatus)
 	{
-		if (deviceInfo.Length != 2)
-			return BadRequest("Please supply proper device information.");
+		string? device = Request.Headers["X-Authentik-Username"];
+			
+		if (device == null)
+			return BadRequest("X-Authentik-Username was null");
 		
-		Console.WriteLine($"Updating status for: {deviceInfo[0]} as {deviceInfo[1]}.");
-		_deviceDataAccess.UpdateStatus(deviceInfo[0], deviceInfo[1]);
+		Console.WriteLine($"Updating status for: {device} as {deviceStatus}.");
+		_deviceDataAccess.UpdateStatus(device, deviceStatus);
 
 		return Ok();
 	}
