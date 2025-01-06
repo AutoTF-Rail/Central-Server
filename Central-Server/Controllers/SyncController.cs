@@ -28,6 +28,8 @@ public class SyncController : ControllerBase
 		
 		Console.WriteLine($"Updating status for: {deviceInfo[0]} as {deviceInfo[1]}.");
 		_deviceDataAccess.UpdateStatus(deviceInfo[0], deviceInfo[1]);
+
+		return Ok();
 	}
 	
 	[HttpGet("getstatus")]
