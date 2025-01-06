@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Central_Server.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Central_Server.Controllers;
@@ -7,10 +8,41 @@ namespace Central_Server.Controllers;
 public class SyncController : ControllerBase
 {
 	private readonly FileAccess _fileAccess;
+	private readonly DeviceDataAccess _deviceDataAccess;
 
-	public SyncController(FileAccess fileAccess)
+	public SyncController(FileAccess fileAccess, DeviceDataAccess deviceDataAccess)
 	{
 		_fileAccess = fileAccess;
+		_deviceDataAccess = deviceDataAccess;
+	}
+
+	// This has to be reported every 5 minutes, otherwise a device will be marked as offline/no signal/not found (idk yet)
+	// deviceInfo: 
+	// 1: device username
+	// 2: status
+	[HttpPost("updatestatus")]
+	public IActionResult UpdateStatus([FromBody]string[] deviceInfo)
+	{
+		if (deviceInfo.Length != 2)
+			return BadRequest("Please supply proper device information.");
+		
+		Console.WriteLine($"Updating status for: {deviceInfo[0]} as {deviceInfo[1]}.");
+		_deviceDataAccess.UpdateStatus(deviceInfo[0], deviceInfo[1]);
+	}
+	
+	[HttpGet("getstatus")]
+	public IActionResult GetStatus([FromBody]string deviceName)
+	{
+		Console.WriteLine($"Getting status for: {deviceName}.");
+		DeviceStatus? status = _deviceDataAccess.GetStatusByName(deviceName);
+		
+		if (status == null)
+			return BadRequest("Device not found.");
+		
+		if ((DateTime.Now - status.Timestamp) > TimeSpan.FromMinutes(5))
+			return Content("Offline");
+
+		return Content(status.Status);
 	}
 
 	[HttpGet("macAddress")]

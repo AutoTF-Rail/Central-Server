@@ -9,7 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="LiteDB" Version="5.0.21" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Central-Server.Models\Central-Server.Models.csproj" />
     </ItemGroup>
 
 </Project>
