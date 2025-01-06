@@ -40,4 +40,10 @@ public class FileAccess
 		string path = Path.Combine(_dataDir, fileName);
 		File.WriteAllText(path, content);
 	}
+
+	public void AppendAllLines(string fileName, string[] content)
+	{
+		string path = Path.Combine(_dataDir, fileName);
+		File.AppendAllLines(path, content);
+	}
 }
