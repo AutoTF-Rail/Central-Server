@@ -34,6 +34,36 @@ public class FileAccess
 		content = File.ReadAllText(path);
 		return true;
 	}
+	
+	public string[] GetFiles(string directory)
+	{
+		string path = Path.Combine(_dataDir, directory);
+		return Directory.GetFiles(path);
+	}
+
+	public bool DirectoryExists(string directory)
+	{
+		string path = Path.Combine(_dataDir, directory);
+		return Directory.Exists(path);
+	}
+	
+	public string ReadFile(string fileName)
+	{
+		string path = Path.Combine(_dataDir, fileName);
+		return File.ReadAllText(path);
+	}
+	
+	public string[] ReadAllLines(string fileName)
+	{
+		string path = Path.Combine(_dataDir, fileName);
+		return File.ReadAllLines(path);
+	}
+
+	public bool FileExists(string fileName)
+	{
+		string path = Path.Combine(_dataDir, fileName);
+		return File.Exists(path);
+	}
 
 	public void WriteAllText(string fileName, string content)
 	{
