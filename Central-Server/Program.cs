@@ -11,7 +11,7 @@ public class Program
 		builder.Services.AddControllers();
 		FileAccess acc = new FileAccess();
 		builder.Services.AddSingleton(acc);
-		builder.Services.AddSingleton(new DeviceDataAccess());
+		builder.Services.AddSingleton<DeviceDataAccess>();
 		// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 		builder.Services.AddEndpointsApiExplorer();
 		builder.Services.AddSwaggerGen();

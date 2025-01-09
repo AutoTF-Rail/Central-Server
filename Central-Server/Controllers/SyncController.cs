@@ -1,9 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using Central_Server.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Central_Server.Controllers;
 
+[ApiController]
 [Route("/sync")]
 public class SyncController : ControllerBase
 {
@@ -33,8 +35,20 @@ public class SyncController : ControllerBase
 		return Ok();
 	}
 	
-	[HttpGet("getstatus")]
-	public IActionResult GetStatus([FromBody]string deviceName)
+	[HttpGet("lastsynced")]
+	public IActionResult GetStatus(string deviceName)
+	{
+		Console.WriteLine($"Getting last synced date for: {deviceName}.");
+		DeviceStatus? status = _deviceDataAccess.GetStatusByName(deviceName);
+		
+		if (status == null)
+			return BadRequest("Device not found.");
+		
+		return Content(status.Timestamp.ToString("dd.MM.yyyy HH:mm:ss"));
+	}
+	
+	[HttpGet("status")]
+	public IActionResult Status([FromQuery, Required] string deviceName)
 	{
 		Console.WriteLine($"Getting status for: {deviceName}.");
 		DeviceStatus? status = _deviceDataAccess.GetStatusByName(deviceName);
@@ -48,10 +62,32 @@ public class SyncController : ControllerBase
 		return Content(status.Status);
 	}
 
+	[HttpGet("lastkeysupdate")]
+	public IActionResult LastKeysUpdate()
+	{
+		return Content(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"));
+	}
+
+	[HttpGet("lastmacaddrsupdate")]
+	public IActionResult LastMacAddressUpdate()
+	{
+		return Content(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"));
+	}
+
+	[HttpGet("keys")]
+	public IActionResult SyncKeys()
+	{
+		// Get all keys that have a timestamp of "last updated" previous to the given date from the client
+		// Keys might be deleted, but to keep sync, we won't delete themm actually, and just add a "deleted" flag to them.
+		return Content("[]");
+	}
+
 	[HttpGet("macAddress")]
 	public IActionResult SyncMacAddresses()
 	{
-		return Content("");
+		// Get all addresses that have a timestamp of "last updated" previous to the given date from the client.
+		// Keys might be deleted, but to keep sync, we won't delete themm actually, and just add a "deleted" flag to them.
+		return Content("[]");
 	}
 	
 	[HttpPost("uploadlogs")]
@@ -87,16 +123,13 @@ public class SyncController : ControllerBase
 	// 1: device username
 	// 2: date (yyyy-mm-dd)
 	[HttpGet("getlogs")]
-	public IActionResult GetLogs([FromBody] string[] deviceInfo)
+	public IActionResult GetLogs([FromQuery, Required] string deviceName, [FromQuery, Required] string date)
 	{
 		try
 		{
-			if (deviceInfo.Length != 2)
-				return BadRequest("Please supply proper device information.");
-			
-			Console.WriteLine($"Logs requested for: {deviceInfo[0]} at {deviceInfo[1]}.");
+			Console.WriteLine($"Logs requested for: {deviceName} at {date}.");
 
-			string dir = Path.Combine("Logs", deviceInfo[0], deviceInfo[1] + ".txt");
+			string dir = Path.Combine("Logs", deviceName, date + ".txt");
 			
 			if (!_fileAccess.FileExists(dir))
 				return NotFound("Could not find log file.");
@@ -113,7 +146,7 @@ public class SyncController : ControllerBase
 	}
 
 	[HttpGet("indexlogs")]
-	public IActionResult IndexLogs([FromBody] string deviceName)
+	public IActionResult IndexLogs([FromQuery, Required] string deviceName)
 	{
 		try
 		{

@@ -5,9 +5,10 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace Central_Server;
 
-public class DeviceDataAccess
+public class DeviceDataAccess : IDisposable
 {
 	private readonly string _dataDir;
+	private readonly LiteDatabase _database;
 	
 	public DeviceDataAccess()
 	{
@@ -18,15 +19,14 @@ public class DeviceDataAccess
 		Directory.CreateDirectory(_dataDir);
 		_dataDir += "/DeviceData.db";
 #endif
-		LiteDatabase db = new LiteDatabase(_dataDir);
-		ILiteCollection<DeviceStatus> collection = db.GetCollection<DeviceStatus>("deviceStatus");
+		_database = new LiteDatabase(_dataDir);
+		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 		collection.EnsureIndex(x => x.Username);
 	}
 	
 	public void UpdateStatus(string username, string status)
 	{
-		LiteDatabase db = new LiteDatabase(_dataDir);
-		ILiteCollection<DeviceStatus> collection = db.GetCollection<DeviceStatus>("deviceStatus");
+		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 
 		DeviceStatus existingLog = collection.FindOne(x => x.Username == username);
 		if (existingLog != null)
@@ -45,13 +45,18 @@ public class DeviceDataAccess
 			};
 			collection.Insert(newLog);
 		}
+		
 	}
 	
 	public DeviceStatus? GetStatusByName(string username)
 	{
-		LiteDatabase db = new LiteDatabase(_dataDir);
-		ILiteCollection<DeviceStatus> collection = db.GetCollection<DeviceStatus>("deviceStatus");
+		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 
 		return collection.FindOne(x => x.Username == username);
+	}
+
+	public void Dispose()
+	{
+		_database.Dispose();
 	}
 }
