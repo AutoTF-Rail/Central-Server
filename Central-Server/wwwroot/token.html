@@ -9,23 +9,32 @@
 <h1>Fetching Token...</h1>
 <script>
     (async function() {
+        let csrfToken = null;
+        let proxyToken = null;
+        let proxyTokenName = null;
+        
         if ('cookieStore' in window) {
             try {
-                // Get the CSRF token from cookieStore
                 const csrfCookie = await cookieStore.get('authentik_csrf');
-                const token = csrfCookie ? csrfCookie.value : null;
+                csrfToken = csrfCookie ? csrfCookie.value : null;
 
-                if (token) {
-                    // Redirect to the local C# app's endpoint
-                    window.location.href = `http://127.0.0.1:5000/token?token=${encodeURIComponent(token)}`;
-                } else {
-                    console.error('CSRF token not found.');
+                const allCookies = await cookieStore.getAll();
+                for (const cookie of allCookies) {
+                    if (cookie.name.startsWith('authentik_proxy')) {
+                        proxyTokenName = cookie.name;
+                        proxyToken = cookie.value;
+                        break;
+                    }
                 }
             } catch (err) {
-                console.error('Error fetching the CSRF token:', err);
+                console.error('Error fetching tokens from cookieStore:', err);
             }
+        }
+        
+        if (csrfToken && proxyToken) {
+            window.location.href = `http://127.0.0.1:5000/token?csrf_token=${encodeURIComponent(csrfToken)}&${encodeURIComponent(proxyTokenName)}=${encodeURIComponent(proxyToken)}`;
         } else {
-            console.error('cookieStore API is not supported in this browser.');
+            console.error('Required tokens not found.');
         }
     })();
 </script>
