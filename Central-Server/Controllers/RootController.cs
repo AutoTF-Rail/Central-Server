@@ -23,11 +23,11 @@ public class RootController : ControllerBase
 	{
 		string? csrfToken = Request.Query["csrf_token"];
 
-		string proxyToken = Request.Cookies.FirstOrDefault(c => c.Key.StartsWith("authentik_proxy")).Value;
+		KeyValuePair<string, string> proxyToken = Request.Cookies.FirstOrDefault(c => c.Key.StartsWith("authentik_proxy"));
 
-		if (!string.IsNullOrEmpty(csrfToken) && !string.IsNullOrEmpty(proxyToken))
+		if (!string.IsNullOrEmpty(csrfToken) && !string.IsNullOrEmpty(proxyToken.Key))
 		{
-			string redirectUrl = $"http://127.0.0.1:5000/token?csrf_token={csrfToken}&proxy_token={proxyToken}";
+			string redirectUrl = $"http://localhost:5000/token?csrf_token={csrfToken}&proxy_name={proxyToken.Key}&proxy_token={proxyToken}";
 			return Redirect(redirectUrl);
 		}
 
