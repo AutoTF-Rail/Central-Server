@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Fetching Token...</title>
+</head>
+<body>
+<h1>Fetching Token...</h1>
+<script>
+    (async function() {
+        if ('cookieStore' in window) {
+            try {
+                // Get the CSRF token from cookieStore
+                const csrfCookie = await cookieStore.get('authentik_csrf');
+                const token = csrfCookie ? csrfCookie.value : null;
+
+                if (token) {
+                    // Redirect to the local C# app's endpoint
+                    window.location.href = `http://127.0.0.1:5000/token?token=${encodeURIComponent(token)}`;
+                } else {
+                    console.error('CSRF token not found.');
+                }
+            } catch (err) {
+                console.error('Error fetching the CSRF token:', err);
+            }
+        } else {
+            console.error('cookieStore API is not supported in this browser.');
+        }
+    })();
+</script>
+</body>
+</html>

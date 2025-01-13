@@ -15,7 +15,7 @@ public class RootController : ControllerBase
 	[HttpGet("/token")]
 	public IActionResult Token()
 	{
-		return File("~/token.js", "application/javascript");
+		return File("~/token.html", "text/html");
 	}
 }
 [Route("/meow")]
