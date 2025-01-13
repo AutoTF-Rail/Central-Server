@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using FileAccess = Central_Server.Data.FileAccess;
 
 namespace Central_Server.Controllers;
 
@@ -9,6 +10,12 @@ public class RootController : ControllerBase
 	public IActionResult Index()
 	{
 		return Content("Bluba");
+	}
+	
+	[HttpGet("/token")]
+	public IActionResult Token()
+	{
+		return File("~/token.js", "application/javascript");
 	}
 }
 [Route("/meow")]
