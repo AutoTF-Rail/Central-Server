@@ -17,6 +17,22 @@ public class RootController : ControllerBase
 	{
 		return File("~/token.html", "text/html");
 	}
+	
+	[HttpGet("/tokenStep")]
+	public IActionResult TokenStep()
+	{
+		string? csrfToken = Request.Query["csrf_token"];
+
+		string proxyToken = Request.Cookies.FirstOrDefault(c => c.Key.StartsWith("authentik_proxy")).Value;
+
+		if (!string.IsNullOrEmpty(csrfToken) && !string.IsNullOrEmpty(proxyToken))
+		{
+			string redirectUrl = $"http://127.0.0.1:5000/token?csrf_token={csrfToken}&proxy_token={proxyToken}";
+			return Redirect(redirectUrl);
+		}
+
+		return Content("Tokens not found.");
+	}
 }
 [Route("/meow")]
 public class MeowController : ControllerBase
