@@ -10,6 +10,8 @@ public class KeyDataAccess : IDisposable
 	private readonly string _dataDir;
 	private readonly LiteDatabase _database;
 	
+	private const string LastChangedId = "LastChanged";
+	
 	public KeyDataAccess()
 	{
 #if RELEASE
@@ -28,16 +30,18 @@ public class KeyDataAccess : IDisposable
 
 	private void InitializeDatabase()
 	{
+		BsonDocument entity = new BsonDocument { ["Date"] = DateTime.Now };
 		ILiteCollection<object> collection = _database.GetCollection<object>("DataSettings");
 		if (collection.FindById("LastChanged") == null)
-			collection.Insert("LastChanged", DateTime.Now);
+			collection.Insert(LastChangedId, entity);
 	}
 
 	// The changes that require this method should be so substantial, that the method itself should save the database at the end, so this method doesn't require a checkpoint call.
 	private void UpdateLastChanged()
 	{
 		ILiteCollection<object> collection = _database.GetCollection<object>("DataSettings");
-		collection.Update("LastChanged",  DateTime.Now);
+		BsonDocument entity = new BsonDocument { ["Date"] = DateTime.Now };
+		collection.Update(LastChangedId,  entity);
 	}
 
 	public DateTime GetLastChanged()
