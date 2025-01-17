@@ -1,9 +1,8 @@
 using Central_Server.Models;
 using LiteDB;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualBasic.FileIO;
 
-namespace Central_Server;
+namespace Central_Server.Data;
 
 public class DeviceDataAccess : IDisposable
 {
@@ -28,7 +27,7 @@ public class DeviceDataAccess : IDisposable
 	{
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 
-		DeviceStatus existingLog = collection.FindOne(x => x.Username == username);
+		DeviceStatus? existingLog = collection.FindOne(x => x.Username == username);
 		if (existingLog != null)
 		{
 			existingLog.Timestamp = DateTime.UtcNow;
@@ -45,7 +44,7 @@ public class DeviceDataAccess : IDisposable
 			};
 			collection.Insert(newLog);
 		}
-		
+		_database.Checkpoint();
 	}
 	
 	public DeviceStatus? GetStatusByName(string username)

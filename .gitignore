@@ -401,3 +401,4 @@ FodyWeavers.xsd
 .idea
 Central-Server/out
 .DS_Store
+out

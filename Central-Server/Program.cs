@@ -1,3 +1,6 @@
+using Central_Server.Data;
+using FileAccess = Central_Server.Data.FileAccess;
+
 namespace Central_Server;
 
 public class Program
@@ -12,6 +15,7 @@ public class Program
 		FileAccess acc = new FileAccess();
 		builder.Services.AddSingleton(acc);
 		builder.Services.AddSingleton<DeviceDataAccess>();
+		builder.Services.AddSingleton<KeyDataAccess>();
 		// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 		builder.Services.AddEndpointsApiExplorer();
 		builder.Services.AddSwaggerGen();
