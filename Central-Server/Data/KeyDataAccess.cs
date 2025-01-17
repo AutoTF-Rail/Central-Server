@@ -1,3 +1,4 @@
+using System.Text;
 using Central_Server.Models;
 using LiteDB;
 using Microsoft.VisualBasic.FileIO;
@@ -112,7 +113,6 @@ public class KeyDataAccess : IDisposable
 			SerialNumber = serialNumber,
 			Secret = secret,
 			LastUsed = DateTime.Now,
-			Verified = true,
 			CreatedOn = DateTime.Now
 		};
 		collection.Insert(newLog);
@@ -158,7 +158,7 @@ public class KeyDataAccess : IDisposable
 		string secret = GetSecret(serialNumber);
 		byte[] secretBytes = Base32Encoding.ToBytes(secret);
 
-		Totp totp = new Totp(secretBytes);
+		Totp totp = new Totp(secretBytes, 15, OtpHashMode.Sha256);
 		
 		return totp.ComputeTotp(timestamp) == code;
 	}
