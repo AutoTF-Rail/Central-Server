@@ -125,4 +125,21 @@ public class DeviceController : ControllerBase
 
 		return BadRequest("Could not supply log index.");
 	}
+
+	// This has to be reported every 5 minutes, otherwise a device will be marked as offline/no signal/not found (idk yet)
+	// deviceInfo: 
+	// 1: status
+	[HttpPost("updatestatus")]
+	public IActionResult UpdateStatus([FromBody]string deviceStatus)
+	{
+		string? device = Request.Headers["X-Authentik-Username"];
+			
+		if (device == null)
+			return BadRequest("X-Authentik-Username was null");
+		
+		Console.WriteLine($"Updating status for: {device} as {deviceStatus}.");
+		_deviceDataAccess.UpdateStatus(device, deviceStatus);
+
+		return Ok();
+	}
 }
