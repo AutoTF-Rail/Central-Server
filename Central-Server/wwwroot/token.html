@@ -15,6 +15,7 @@
                 const csrfToken = csrfCookie ? csrfCookie.value : null;
 
                 if (csrfToken) {
+                    await sleep(1500);
                     window.location.href = `/tokenStep?csrf_token=${encodeURIComponent(csrfToken)}`;
                 } else {
                     console.error('CSRF token not found.');
