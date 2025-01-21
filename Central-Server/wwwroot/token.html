@@ -8,6 +8,10 @@
 <body>
 <h1>Fetching Token...</h1>
 <script>
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    
     (async function() {
         if ('cookieStore' in window) {
             try {
