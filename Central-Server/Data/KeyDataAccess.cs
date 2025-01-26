@@ -48,8 +48,8 @@ public class KeyDataAccess : IDisposable
 	public DateTime GetLastChanged()
 	{
 		ILiteCollection<object> collection = _database.GetCollection<object>("DataSettings");
-		BsonDocument document = (BsonDocument)collection.FindById(LastChangedId); 
-		return document["Date"].AsDateTime; 
+		Dictionary<string, object> document = (Dictionary<string, object>)collection.FindById(LastChangedId); 
+		return (DateTime)document["Date"]; 
 	}
 	
 	public List<KeyData> GetNew(DateTime lastSync)
