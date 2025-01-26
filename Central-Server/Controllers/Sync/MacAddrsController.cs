@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Central_Server.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Central_Server.Controllers.Sync;
@@ -6,17 +8,41 @@ namespace Central_Server.Controllers.Sync;
 [Route("/sync/mac")]
 public class MacAddrsController : ControllerBase
 {
+	private readonly MacAddrAccess _macAddrAccess;
+
+	public MacAddrsController(MacAddrAccess macAddrAccess)
+	{
+		_macAddrAccess = macAddrAccess;
+	}
+	
+	
 	[HttpGet("lastmacaddrsupdate")]
 	public IActionResult LastMacAddressUpdate()
 	{
-		return Content(DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss"));
+		return Content(_macAddrAccess.GetLastChanged().ToString("dd.MM.yyyy HH:mm:ss"));
 	}
 
 	[HttpGet("macAddress")]
 	public IActionResult SyncMacAddresses()
 	{
-		// Get all addresses that have a timestamp of "last updated" previous to the given date from the client.
-		// Keys might be deleted, but to keep sync, we won't delete themm actually, and just add a "deleted" flag to them.
-		return Content("[]");
+		// If last changed value is never than what the client has, we send all back
+		return Content(JsonSerializer.Serialize(_macAddrAccess.GetAll()));
+	}
+
+	[HttpPost("addAddress")]
+	public IActionResult AddAddress([FromBody] string address)
+	{
+		try
+		{
+			_macAddrAccess.CreateAddress(address);
+			return Ok();
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine("Error while adding a mac address:");
+			Console.WriteLine(e);
+		}
+
+		return BadRequest();
 	}
 }
