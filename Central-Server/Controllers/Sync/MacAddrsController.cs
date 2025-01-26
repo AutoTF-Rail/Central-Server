@@ -34,6 +34,10 @@ public class MacAddrsController : ControllerBase
 	{
 		try
 		{
+			if (string.IsNullOrEmpty(address))
+				return BadRequest();
+			
+			Console.WriteLine("Adding Address: " + address);
 			_macAddrAccess.CreateAddress(address);
 			return Ok();
 		}
