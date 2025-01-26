@@ -14,6 +14,7 @@ public class Program
 		builder.Services.AddControllers();
 		FileAccess acc = new FileAccess();
 		builder.Services.AddSingleton(acc);
+		builder.Services.AddSingleton<MacAddrAccess>();
 		builder.Services.AddSingleton<DeviceDataAccess>();
 		builder.Services.AddSingleton<KeyDataAccess>();
 		// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
