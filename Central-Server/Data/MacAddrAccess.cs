@@ -22,7 +22,9 @@ public class MacAddrAccess
 		_dataDir += "/MacAddrData.db";
 #endif
 		_database = new LiteDatabase(_dataDir);
-		ILiteCollection<string> collection = _database.GetCollection<string>("macAddrData");
+		ILiteCollection<MacAddressEntity> collection = _database.GetCollection<MacAddressEntity>("macAddrData");
+		collection.EnsureIndex(x => x.Id);
+		
 		ILiteCollection<object> settings = _database.GetCollection<object>("DataSettings");
 		InitializeDatabase();
 	}
@@ -51,15 +53,19 @@ public class MacAddrAccess
 	
 	public List<string> GetAll()
 	{
-		ILiteCollection<string> collection = _database.GetCollection<string>("macAddrData");
-		return collection.FindAll().ToList();
+		ILiteCollection<MacAddressEntity> collection = _database.GetCollection<MacAddressEntity>("macAddrData");
+		return collection.FindAll().Select(x => x.Address).ToList();
 	}
 
 	public void CreateAddress(string address)
 	{
-		ILiteCollection<string> collection = _database.GetCollection<string>("macAddrData");
-		
-		collection.Insert(address);
+		ILiteCollection<MacAddressEntity> collection = _database.GetCollection<MacAddressEntity>("macAddrData");
+
+		collection.Insert(new MacAddressEntity()
+		{
+			Address = address
+		});
+
 		UpdateLastChanged();
 		_database.Checkpoint();
 	}

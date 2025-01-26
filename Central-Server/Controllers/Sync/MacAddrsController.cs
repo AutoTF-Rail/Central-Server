@@ -35,8 +35,11 @@ public class MacAddrsController : ControllerBase
 		try
 		{
 			if (string.IsNullOrEmpty(address))
-				return BadRequest();
-			
+			{
+				Console.WriteLine("Could not add address due to it being null or empty: " + address);
+				return NotFound();
+			}
+
 			Console.WriteLine("Adding Address: " + address);
 			_macAddrAccess.CreateAddress(address);
 			return Ok();
