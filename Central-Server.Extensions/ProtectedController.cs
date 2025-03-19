@@ -34,7 +34,7 @@ public class ProtectedController : ControllerBase, IActionFilter
 #endif
 			deviceName = headers["X-Authentik-Username"].ToString();
                 
-			// Validate the username (you might want to add additional logic here)
+			// TODO: Implement proper session auth
 			return !string.IsNullOrEmpty(deviceName);
 		}
 		catch
