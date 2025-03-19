@@ -1,12 +1,10 @@
-using Microsoft.VisualBasic.FileIO;
-
 namespace Central_Server.Data;
 
 public class FileAccess
 {
 	private readonly string _dataDir;
 
-	private readonly string? _evuName;
+	private readonly string _evuName;
 	
 	public FileAccess()
 	{
@@ -16,7 +14,9 @@ public class FileAccess
 		_dataDir = Path.Combine(SpecialDirectories.MyDocuments, "AutoTf/CentralServer");
 		Directory.CreateDirectory(_dataDir);
 #endif
-		_evuName = Environment.GetEnvironmentVariable("evuName");
+		_evuName = Environment.GetEnvironmentVariable("evuName") ?? "UnknownEVU";
+		
+		// TODO: Don't startup here if the evu name is unknown?
 	}
 
 	public string GetEvuName()
@@ -95,9 +95,8 @@ public class FileAccess
 		string path = Path.Combine(_dataDir, fileName);
 		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 
-		using (FileStream stream = new FileStream(path, FileMode.Create))
-		{
-			file.CopyTo(stream);
-		}
+		using FileStream stream = new FileStream(path, FileMode.Create);
+		
+		file.CopyTo(stream);
 	}
 }

@@ -100,8 +100,9 @@ public class DeviceController : ProtectedController
 		return BadRequest();
 	}
 	
+	// TODO: Rename endpoint?
 	[HttpGet("lastsynced")]
-	public IActionResult GetStatus([FromQuery, Required] string deviceName)
+	public IActionResult LastSynced([FromQuery, Required] string deviceName)
 	{
 		Console.WriteLine($"Getting last synced date for: {deviceName}.");
 		DeviceStatus? status = _deviceDataAccess.GetStatusByName(deviceName);
@@ -128,7 +129,7 @@ public class DeviceController : ProtectedController
 	}
 	
 	[HttpPost("uploadlogs")]
-	public IActionResult UploadLogs([FromBody]string[] logs)
+	public IActionResult UploadLogs([FromBody] string[] logs)
 	{
 		try
 		{
@@ -152,9 +153,6 @@ public class DeviceController : ProtectedController
 		return BadRequest();
 	}
 	
-	// deviceInfo:
-	// 1: device username
-	// 2: date (yyyy-mm-dd)
 	[HttpGet("getlogs")]
 	public IActionResult GetLogs([FromQuery, Required] string deviceName, [FromQuery, Required] string date)
 	{
@@ -206,7 +204,7 @@ public class DeviceController : ProtectedController
 	[HttpGet("devices")]
 	public IActionResult Devices()
 	{
-		// TODO: Implement BETTER Device index. (db?)
+		// TODO: Implement BETTER Device index. (db or via authentik?) 
 		// TODO: TryCatch
 		string[] directories = _fileAccess.GetDirectories("Logs");
 		return Content(JsonSerializer.Serialize(directories));
