@@ -34,16 +34,18 @@ public class DeviceController : ControllerBase
 			
 			try
 			{
-				Console.WriteLine($"SYNC: {deviceName} requested to upload a video.");
+				Console.WriteLine($"SYNC: {deviceName} requested to upload video \"{file.FileName}\".");
 				
-				string filePath = Path.Combine("Logs", deviceName!, file.FileName);
+				string filePath = Path.Combine("Videos", deviceName!);
+				Directory.CreateDirectory(filePath);
+				filePath = Path.Combine(filePath, file.FileName);
 
 				using (FileStream stream = new FileStream(filePath, FileMode.Create))
 				{
 					await file.CopyToAsync(stream);
 				}
 				
-				Console.WriteLine($"SYNC: Successfully uploaded logs for {deviceName}.");
+				Console.WriteLine($"SYNC: Successfully uploaded video \"{file.FileName}\".");
 				return Ok();
 			}
 			catch (Exception ex)
@@ -53,7 +55,7 @@ public class DeviceController : ControllerBase
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine("SYNC: ERROR: Could not upload logs:");
+			Console.WriteLine("SYNC: ERROR: Could not upload video:");
 			Console.WriteLine(e.Message);
 		}
 
