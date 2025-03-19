@@ -58,6 +58,12 @@ public class FileAccess
 		string path = Path.Combine(_dataDir, fileName);
 		return File.ReadAllLines(path);
 	}
+	
+	public byte[] ReadAllBytes(string fileName)
+	{
+		string path = Path.Combine(_dataDir, fileName);
+		return File.ReadAllBytes(path);
+	}
 
 	public bool FileExists(string fileName)
 	{

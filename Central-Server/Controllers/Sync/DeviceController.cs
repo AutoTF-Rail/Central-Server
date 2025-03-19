@@ -34,7 +34,7 @@ public class DeviceController : ControllerBase
 			if (!_fileAccess.FileExists(dir))
 				return NotFound("Could not find video file.");
 
-			return File(System.IO.File.ReadAllBytes(dir), "video/mp4", date + ".mp4");
+			return File(_fileAccess.ReadAllBytes(dir), "video/mp4", date + ".mp4");
 		}
 		catch (Exception e)
 		{
