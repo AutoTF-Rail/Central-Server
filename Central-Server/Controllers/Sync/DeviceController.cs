@@ -213,7 +213,7 @@ public class DeviceController : ProtectedController
 	
 	// TODO: Docs
 	[HttpPost("addTrain")]
-	public IActionResult AddTrain([FromHeader] string trainName, [FromHeader] string authentikUsername, [FromHeader] string trainId)
+	public IActionResult AddTrain([FromQuery, Required] string trainName, [FromQuery, Required] string authentikUsername, [FromQuery, Required] string trainId)
 	{
 		Console.WriteLine($"Creating new train as {trainName} with authentik username {authentikUsername} and train ID {trainId}.");
 		_deviceDataAccess.CreateTrain(trainName, authentikUsername, trainId);
