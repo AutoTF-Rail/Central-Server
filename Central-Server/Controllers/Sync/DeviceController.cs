@@ -23,7 +23,7 @@ public class DeviceController : ControllerBase
 	
 	[AuthentikAuthorize]
 	[HttpPost("uploadvideo")]
-	public async Task<IActionResult> UploadLogs([FromForm] IFormFile file)
+	public IActionResult UploadLogs([FromForm] IFormFile file)
 	{
 		try
 		{
@@ -36,14 +36,7 @@ public class DeviceController : ControllerBase
 			{
 				Console.WriteLine($"SYNC: {deviceName} requested to upload video \"{file.FileName}\".");
 				
-				string filePath = Path.Combine("Videos", deviceName!);
-				Directory.CreateDirectory(filePath);
-				filePath = Path.Combine(filePath, file.FileName);
-
-				using (FileStream stream = new FileStream(filePath, FileMode.Create))
-				{
-					await file.CopyToAsync(stream);
-				}
+				_fileAccess.SaveVideo(Path.Combine("Videos", deviceName!, file.FileName), file);
 				
 				Console.WriteLine($"SYNC: Successfully uploaded video \"{file.FileName}\".");
 				return Ok();

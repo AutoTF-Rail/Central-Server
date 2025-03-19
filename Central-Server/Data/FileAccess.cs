@@ -77,4 +77,15 @@ public class FileAccess
 		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
 		File.AppendAllLines(path, content);
 	}
+
+	public void SaveVideo(string fileName, IFormFile file)
+	{
+		string path = Path.Combine(_dataDir, fileName);
+		Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+
+		using (FileStream stream = new FileStream(path, FileMode.Create))
+		{
+			file.CopyTo(stream);
+		}
+	}
 }
