@@ -16,7 +16,7 @@ A desktop client for this API is being developed at [AutoTF-Rail/AutoTf.Manager]
 
 ## API
 
-The API can be reached at https://<evuName>.server.autotf.de
+The API can be reached at https://\<evuName\>.server.autotf.de
 
 ### Available endpoints:
 
