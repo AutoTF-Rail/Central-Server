@@ -22,6 +22,56 @@ public class DeviceController : ControllerBase
 	}
 	
 	[AuthentikAuthorize]
+	[HttpGet("getvideo")]
+	public IActionResult GetVideo([FromQuery, Required] string deviceName, [FromQuery, Required] string date)
+	{
+		try
+		{
+			Console.WriteLine($"Video requested for: {deviceName} at {date}.");
+
+			string dir = Path.Combine("Videos", deviceName, date + ".mp4");
+			
+			if (!_fileAccess.FileExists(dir))
+				return NotFound("Could not find video file.");
+
+			return File(System.IO.File.ReadAllBytes(dir), "video/mp4", date + ".mp4");
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine("Could not provide video:");
+			Console.WriteLine(e.Message);
+		}
+
+		return BadRequest("Could not supply video.");
+	}
+	
+	[AuthentikAuthorize]
+	[HttpGet("indexvideos")]
+	public IActionResult IndexVideos([FromQuery, Required] string deviceName)
+	{
+		try
+		{
+			Console.WriteLine($"Video index requested for: {deviceName}.");
+
+			string dir = Path.Combine("Videos", deviceName);
+			
+			if (!_fileAccess.DirectoryExists(dir))
+				return NotFound("Could not find device.");
+
+			string[] files = _fileAccess.GetFiles(dir);
+
+			return Content(JsonSerializer.Serialize(files.Select(Path.GetFileNameWithoutExtension)));
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine("Could not provide video index.");
+			Console.WriteLine(e.Message);
+		}
+
+		return BadRequest("Could not supply video index.");
+	}
+	
+	[AuthentikAuthorize]
 	[HttpPost("uploadvideo")]
 	public IActionResult UploadLogs([FromForm] IFormFile file)
 	{
