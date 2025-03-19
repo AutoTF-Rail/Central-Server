@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using Central_Server.Data;
+using Central_Server.Extensions;
 using Central_Server.Models;
 using Microsoft.AspNetCore.Mvc;
 using FileAccess = Central_Server.Data.FileAccess;
@@ -18,6 +19,45 @@ public class DeviceController : ControllerBase
 	{
 		_deviceDataAccess = deviceDataAccess;
 		_fileAccess = fileAccess;
+	}
+	
+	[AuthentikAuthorize]
+	[HttpPost("uploadvideo")]
+	public async Task<IActionResult> UploadLogs([FromForm] IFormFile file)
+	{
+		try
+		{
+			if (file.Length == 0)
+				return BadRequest("Please supply a video in the body to upload");
+			
+			string? deviceName = HttpContext.Items["DeviceName"] as string;
+			
+			try
+			{
+				Console.WriteLine($"SYNC: {deviceName} requested to upload a video.");
+				
+				string filePath = Path.Combine("Logs", deviceName!, file.FileName);
+
+				using (FileStream stream = new FileStream(filePath, FileMode.Create))
+				{
+					await file.CopyToAsync(stream);
+				}
+				
+				Console.WriteLine($"SYNC: Successfully uploaded logs for {deviceName}.");
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(500, $"Internal server error: {ex.Message}");
+			}
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine("SYNC: ERROR: Could not upload logs:");
+			Console.WriteLine(e.Message);
+		}
+
+		return BadRequest();
 	}
 	
 	[HttpGet("lastsynced")]
@@ -124,6 +164,13 @@ public class DeviceController : ControllerBase
 		}
 
 		return BadRequest("Could not supply log index.");
+	}
+
+	[HttpGet("devices")]
+	public IActionResult Devices()
+	{
+		// TODO: Implement Device index.
+		return Ok();
 	}
 
 	// This has to be reported every 5 minutes, otherwise a device will be marked as offline/no signal/not found (idk yet)

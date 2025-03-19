@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Central-Server.Extensions\Central-Server.Extensions.csproj" />
       <ProjectReference Include="..\Central-Server.Models\Central-Server.Models.csproj" />
     </ItemGroup>
 
