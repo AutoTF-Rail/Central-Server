@@ -8,9 +8,8 @@ using FileAccess = Central_Server.Data.FileAccess;
 
 namespace Central_Server.Controllers.Sync;
 
-[ApiController]
 [Route("/sync/device")]
-public class DeviceController : ControllerBase
+public class DeviceController : ProtectedController
 {
 	private readonly DeviceDataAccess _deviceDataAccess;
 	private readonly FileAccess _fileAccess;
@@ -21,7 +20,6 @@ public class DeviceController : ControllerBase
 		_fileAccess = fileAccess;
 	}
 	
-	[AuthentikAuthorize]
 	[HttpGet("getvideo")]
 	public IActionResult GetVideo([FromQuery, Required] string deviceName, [FromQuery, Required] string date)
 	{
@@ -45,7 +43,6 @@ public class DeviceController : ControllerBase
 		return BadRequest("Could not supply video.");
 	}
 	
-	[AuthentikAuthorize]
 	[HttpGet("indexvideos")]
 	public IActionResult IndexVideos([FromQuery, Required] string deviceName)
 	{
@@ -71,7 +68,6 @@ public class DeviceController : ControllerBase
 		return BadRequest("Could not supply video index.");
 	}
 	
-	[AuthentikAuthorize]
 	[HttpPost("uploadvideo")]
 	public IActionResult UploadLogs([FromForm] IFormFile file)
 	{
@@ -80,13 +76,11 @@ public class DeviceController : ControllerBase
 			if (file.Length == 0)
 				return BadRequest("Please supply a video in the body to upload");
 			
-			string? deviceName = HttpContext.Items["DeviceName"] as string;
-			
 			try
 			{
-				Console.WriteLine($"SYNC: {deviceName} requested to upload video \"{file.FileName}\".");
+				Console.WriteLine($"SYNC: {Username} requested to upload video \"{file.FileName}\".");
 				
-				_fileAccess.SaveVideo(Path.Combine("Videos", deviceName!, file.FileName), file);
+				_fileAccess.SaveVideo(Path.Combine("Videos", Username, file.FileName), file);
 				
 				Console.WriteLine($"SYNC: Successfully uploaded video \"{file.FileName}\".");
 				return Ok();
@@ -137,19 +131,15 @@ public class DeviceController : ControllerBase
 	{
 		try
 		{
-			string? device = Request.Headers["X-Authentik-Username"];
-			
-			if (device == null)
-				return BadRequest("X-Authentik-Username was null");
 			if (logs.Length == 0)
 				return BadRequest("Please supply logs in the body to upload");
 			
 			
-			Console.WriteLine($"SYNC: {device} requested to upload logs.");
-			_fileAccess.AppendAllLines(Path.Combine("Logs", device, DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
+			Console.WriteLine($"SYNC: {Username} requested to upload logs.");
+			_fileAccess.AppendAllLines(Path.Combine("Logs", Username, DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
 				logs);
 			
-			Console.WriteLine($"SYNC: Successfully uploaded logs for {device}.");
+			Console.WriteLine($"SYNC: Successfully uploaded logs for {Username}.");
 			return Ok();
 		}
 		catch (Exception e)
@@ -195,6 +185,7 @@ public class DeviceController : ControllerBase
 			Console.WriteLine($"Logs index requested for: {deviceName}.");
 
 			string dir = Path.Combine("Logs", deviceName);
+			
 			if (!_fileAccess.DirectoryExists(dir))
 				return NotFound("Could not find device.");
 
@@ -214,23 +205,18 @@ public class DeviceController : ControllerBase
 	[HttpGet("devices")]
 	public IActionResult Devices()
 	{
-		// TODO: Implement Device index.
-		return Ok();
+		// TODO: Implement BETTER Device index. (db?)
+		// TODO: TryCatch
+		string[] directories = _fileAccess.GetDirectories("Logs");
+		return Content(JsonSerializer.Serialize(directories));
 	}
 
 	// This has to be reported every 5 minutes, otherwise a device will be marked as offline/no signal/not found (idk yet)
-	// deviceInfo: 
-	// 1: status
 	[HttpPost("updatestatus")]
 	public IActionResult UpdateStatus([FromBody]string deviceStatus)
 	{
-		string? device = Request.Headers["X-Authentik-Username"];
-			
-		if (device == null)
-			return BadRequest("X-Authentik-Username was null");
-		
-		Console.WriteLine($"Updating status for: {device} as {deviceStatus}.");
-		_deviceDataAccess.UpdateStatus(device, deviceStatus);
+		Console.WriteLine($"Updating status for: {Username} as {deviceStatus}.");
+		_deviceDataAccess.UpdateStatus(Username, deviceStatus);
 
 		return Ok();
 	}

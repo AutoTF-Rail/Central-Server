@@ -40,6 +40,12 @@ public class FileAccess
 		string path = Path.Combine(_dataDir, directory);
 		return Directory.GetFiles(path);
 	}
+	
+	public string[] GetDirectories(string directory)
+	{
+		string path = Path.Combine(_dataDir, directory);
+		return Directory.GetDirectories(path);
+	}
 
 	public bool DirectoryExists(string directory)
 	{
