@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Central_Server.Extensions;
 
-[ApiController]
 public class ProtectedController : ControllerBase, IActionFilter
 {
 	protected string Username { get; private set; } = null!;

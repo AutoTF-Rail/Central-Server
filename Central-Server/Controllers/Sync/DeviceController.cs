@@ -8,6 +8,7 @@ using FileAccess = Central_Server.Data.FileAccess;
 
 namespace Central_Server.Controllers.Sync;
 
+[ApiController]
 [Route("/sync/device")]
 public class DeviceController : ProtectedController
 {
