@@ -18,30 +18,77 @@ A desktop client for this API is being developed at [AutoTF-Rail/AutoTf.Manager]
 
 ### Available endpoints:
 
-> /token [GET]: Redirects the user to a /tokenStep, along with their authentik session token. Used for manager app.
-> /tokenStep [GET]: Redirects the user to a local endpoint at localhost:5000/token to login the manager app.
-> /sync
-    > /mac
-        > /lastmacaddrsupdate [GET]: Gets the last time a update happened on the list of allowed MAC addresses.
-        > /macaddress [GET]: Gets all allowed MAC addresses. Should be only used when /lastmacaddrsupdate returns a newer value than the own local one.
-        > /addAddress [GET]: Adds a MAC address to the list of allowed addresses.
-    > /keys
-        > /validate [GET]: Validates a given code against the timestamp and the secret of the key (by hand of the given serial number). Used when adding a new key, to validate that it works. (Keys can't be used unless verified)
-        > /lastkeysupdate [GET]: Gets the last time a update happened on the list of allowed keys.
-        > /newkeys [GET]: Gets all keys that have been added since the given timestamp.
-        > /allkeys [GET]: Gets all allowed keys.
-        > /addkey [POST]: Adds a key by the given serial number and secret.
-    > /device
-        > /getvideo [GET]: Returns a download for a video from a given device and date.
-        > /indexvideos [GET]: Returns an index of all videos available for a given device.
-        > /uploadvideo [POST]: Endpoint to upload a video. 
-        > /lastsynced [GET]: Returns the date that a last device has synced.
-        > /status [GET]: Gets the status of a given device (Online/Offline)
-        > /uploadlogs [POST]: Endpoint to upload logs.
-        > /getlogs [GET]: Gets the logs from a specified device at a specific date.
-        > /status [GET]: Returns an index of all logs available for a given device.
-        > /devices [GET]: Returns an index of all available/known devices.
-        > /updatestatus [POST]: Endpoint to update the status of a device (yourself).
+## Token Endpoints
+
+- **`GET /token`**  
+  Redirects the user to `/tokenStep`, along with their Authentik session token. Used for the manager app.
+
+- **`GET /tokenStep`**  
+  Redirects the user to a local endpoint at `http://localhost:5000/token` to log in to the manager app.
+
+---
+
+## Sync Endpoints
+
+### MAC Address Management
+
+- **`GET /sync/mac/lastmacaddrsupdate`**  
+  Retrieves the last time an update occurred on the list of allowed MAC addresses.
+
+- **`GET /sync/mac/macaddress`**  
+  Retrieves all allowed MAC addresses. Should only be used when `/lastmacaddrsupdate` returns a newer value than the local one.
+
+- **`GET /sync/mac/addAddress`**  
+  Adds a MAC address to the list of allowed addresses.
+
+### Key Management
+
+- **`GET /sync/keys/validate`**  
+  Validates a given code against the timestamp and the secret of the key (using the provided serial number). Used when adding a new key to ensure it works. *(Keys can't be used unless verified.)*
+
+- **`GET /sync/keys/lastkeysupdate`**  
+  Retrieves the last time an update occurred on the list of allowed keys.
+
+- **`GET /sync/keys/newkeys`**  
+  Retrieves all keys that have been added since the given timestamp.
+
+- **`GET /sync/keys/allkeys`**  
+  Retrieves all allowed keys.
+
+- **`POST /sync/keys/addkey`**  
+  Adds a key using the given serial number and secret.
+
+### Device Management
+
+- **`GET /sync/device/getvideo`**  
+  Returns a downloadable video from a specified device and date.
+
+- **`GET /sync/device/indexvideos`**  
+  Returns an index of all available videos for a specified device.
+
+- **`POST /sync/device/uploadvideo`**  
+  Uploads a video.
+
+- **`GET /sync/device/lastsynced`**  
+  Retrieves the last sync date for a device.
+
+- **`GET /sync/device/status`**  
+  Gets the status of a specified device (Online/Offline).
+
+- **`POST /sync/device/uploadlogs`**  
+  Uploads logs.
+
+- **`GET /sync/device/getlogs`**  
+  Retrieves logs from a specified device for a specific date.
+
+- **`GET /sync/device/status`**  
+  Returns an index of all logs available for a given device.
+
+- **`GET /sync/device/devices`**  
+  Returns an index of all available/known devices.
+
+- **`POST /sync/device/updatestatus`**  
+  Updates the status of a device (itself).
 
 
 ## Contributions
