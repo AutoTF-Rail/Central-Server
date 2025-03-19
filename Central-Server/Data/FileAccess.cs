@@ -6,6 +6,7 @@ public class FileAccess
 
 	private readonly string _evuName;
 	
+	// TODO: Convert to hosted service?
 	public FileAccess()
 	{
 #if RELEASE

@@ -1,3 +1,4 @@
+using AutoTf.Logging;
 using Central_Server.Data;
 using Central_Server.Extensions;
 using FileAccess = Central_Server.Data.FileAccess;
@@ -8,6 +9,9 @@ public class Program
 {
 	public static void Main(string[] args)
 	{
+		Logger logger = new Logger(true);
+		logger.Log($"Assembling at {DateTime.Now:hh:mm:ss}.");
+		
 		WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 		builder.Services.AddControllers(options =>
@@ -16,7 +20,9 @@ public class Program
 		});
 
 		FileAccess acc = new FileAccess();
+		
 		builder.Services.AddSingleton(acc);
+		builder.Services.AddSingleton(logger);
 		builder.Services.AddSingleton<MacAddrAccess>();
 		builder.Services.AddSingleton<DeviceDataAccess>();
 		builder.Services.AddSingleton<KeyDataAccess>();
@@ -42,7 +48,7 @@ public class Program
 		
 		app.MapControllers();
 
-		Console.WriteLine("Starting for EVU: " + acc.GetEvuName());
+		logger.Log("Starting for EVU: " + acc.GetEvuName());
 		app.Run();
 	}
 }

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using AutoTf.Logging;
 using Central_Server.Data;
 using Central_Server.Extensions;
 using Central_Server.Models;
@@ -14,11 +15,13 @@ public class DeviceController : ProtectedController
 {
 	private readonly DeviceDataAccess _deviceDataAccess;
 	private readonly FileAccess _fileAccess;
+	private readonly Logger _logger;
 
-	public DeviceController(DeviceDataAccess deviceDataAccess, FileAccess fileAccess)
+	public DeviceController(DeviceDataAccess deviceDataAccess, FileAccess fileAccess, Logger logger)
 	{
 		_deviceDataAccess = deviceDataAccess;
 		_fileAccess = fileAccess;
+		_logger = logger;
 	}
 	
 	[HttpGet("getvideo")]
@@ -26,7 +29,7 @@ public class DeviceController : ProtectedController
 	{
 		try
 		{
-			Console.WriteLine($"Video requested for: {deviceName} at {date}.");
+			_logger.Log($"Video requested for: {deviceName} at {date}.");
 
 			string dir = Path.Combine("Videos", deviceName, date + ".mp4");
 			
@@ -37,8 +40,8 @@ public class DeviceController : ProtectedController
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine("Could not provide video:");
-			Console.WriteLine(e.Message);
+			_logger.Log("Could not provide video:");
+			_logger.Log(e.ToString());
 		}
 
 		return BadRequest("Could not supply video.");
@@ -49,7 +52,7 @@ public class DeviceController : ProtectedController
 	{
 		try
 		{
-			Console.WriteLine($"Video index requested for: {deviceName}.");
+			_logger.Log($"Video index requested for: {deviceName}.");
 
 			string dir = Path.Combine("Videos", deviceName);
 			
@@ -62,8 +65,8 @@ public class DeviceController : ProtectedController
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine("Could not provide video index.");
-			Console.WriteLine(e.Message);
+			_logger.Log("Could not provide video index.");
+			_logger.Log(e.ToString());
 		}
 
 		return BadRequest("Could not supply video index.");
@@ -79,11 +82,11 @@ public class DeviceController : ProtectedController
 			
 			try
 			{
-				Console.WriteLine($"SYNC: {Username} requested to upload video \"{file.FileName}\".");
+				_logger.Log($"SYNC: {Username} requested to upload video \"{file.FileName}\".");
 				
 				_fileAccess.SaveVideo(Path.Combine("Videos", Username, file.FileName), file);
 				
-				Console.WriteLine($"SYNC: Successfully uploaded video \"{file.FileName}\".");
+				_logger.Log($"SYNC: Successfully uploaded video \"{file.FileName}\".");
 				return Ok();
 			}
 			catch (Exception ex)
@@ -93,8 +96,8 @@ public class DeviceController : ProtectedController
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine("SYNC: ERROR: Could not upload video:");
-			Console.WriteLine(e.Message);
+			_logger.Log("SYNC: ERROR: Could not upload video:");
+			_logger.Log(e.ToString());
 		}
 
 		return BadRequest();
@@ -104,7 +107,7 @@ public class DeviceController : ProtectedController
 	[HttpGet("lastsynced")]
 	public IActionResult LastSynced([FromQuery, Required] string deviceName)
 	{
-		Console.WriteLine($"Getting last synced date for: {deviceName}.");
+		_logger.Log($"Getting last synced date for: {deviceName}.");
 		DeviceStatus? status = _deviceDataAccess.GetStatusByName(deviceName);
 		
 		if (status == null)
@@ -116,7 +119,7 @@ public class DeviceController : ProtectedController
 	[HttpGet("status")]
 	public IActionResult Status([FromQuery, Required] string deviceName)
 	{
-		Console.WriteLine($"Getting status for: {deviceName}.");
+		_logger.Log($"Getting status for: {deviceName}.");
 		DeviceStatus? status = _deviceDataAccess.GetStatusByName(deviceName);
 		
 		if (status == null)
@@ -137,17 +140,17 @@ public class DeviceController : ProtectedController
 				return BadRequest("Please supply logs in the body to upload");
 			
 			
-			Console.WriteLine($"SYNC: {Username} requested to upload logs.");
+			_logger.Log($"SYNC: {Username} requested to upload logs.");
 			_fileAccess.AppendAllLines(Path.Combine("Logs", Username, DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
 				logs);
 			
-			Console.WriteLine($"SYNC: Successfully uploaded logs for {Username}.");
+			_logger.Log($"SYNC: Successfully uploaded logs for {Username}.");
 			return Ok();
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine("SYNC: ERROR: Could not upload logs:");
-			Console.WriteLine(e.Message);
+			_logger.Log("SYNC: ERROR: Could not upload logs:");
+			_logger.Log(e.ToString());
 		}
 
 		return BadRequest();
@@ -158,7 +161,7 @@ public class DeviceController : ProtectedController
 	{
 		try
 		{
-			Console.WriteLine($"Logs requested for: {deviceName} at {date}.");
+			_logger.Log($"Logs requested for: {deviceName} at {date}.");
 
 			string dir = Path.Combine("Logs", deviceName, date + ".txt");
 			
@@ -169,8 +172,8 @@ public class DeviceController : ProtectedController
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine("Could not provide logs:");
-			Console.WriteLine(e.Message);
+			_logger.Log("Could not provide logs:");
+			_logger.Log(e.ToString());
 		}
 
 		return BadRequest("Could not supply logs.");
@@ -181,7 +184,7 @@ public class DeviceController : ProtectedController
 	{
 		try
 		{
-			Console.WriteLine($"Logs index requested for: {deviceName}.");
+			_logger.Log($"Logs index requested for: {deviceName}.");
 
 			string dir = Path.Combine("Logs", deviceName);
 			
@@ -194,8 +197,8 @@ public class DeviceController : ProtectedController
 		}
 		catch (Exception e)
 		{
-			Console.WriteLine("Could not provide log index.");
-			Console.WriteLine(e.Message);
+			_logger.Log("Could not provide log index.");
+			_logger.Log(e.ToString());
 		}
 
 		return BadRequest("Could not supply log index.");
@@ -215,7 +218,7 @@ public class DeviceController : ProtectedController
 	[HttpPost("addTrain")]
 	public IActionResult AddTrain([FromQuery, Required] string trainName, [FromQuery, Required] string authentikUsername, [FromQuery, Required] string trainId)
 	{
-		Console.WriteLine($"Creating new train as {trainName} with authentik username {authentikUsername} and train ID {trainId}.");
+		_logger.Log($"Creating new train as {trainName} with authentik username {authentikUsername} and train ID {trainId}.");
 		_deviceDataAccess.CreateTrain(trainName, authentikUsername, trainId);
 		return Ok();
 	}
@@ -231,7 +234,7 @@ public class DeviceController : ProtectedController
 	[HttpPost("updatestatus")]
 	public IActionResult UpdateStatus([FromBody]string deviceStatus)
 	{
-		Console.WriteLine($"Updating status for: {Username} as {deviceStatus}.");
+		_logger.Log($"Updating status for: {Username} as {deviceStatus}.");
 		_deviceDataAccess.UpdateStatus(Username, deviceStatus);
 
 		return Ok();
