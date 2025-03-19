@@ -201,6 +201,7 @@ public class DeviceController : ProtectedController
 		return BadRequest("Could not supply log index.");
 	}
 
+	// TODO: Remove?
 	[HttpGet("devices")]
 	public IActionResult Devices()
 	{
@@ -208,6 +209,22 @@ public class DeviceController : ProtectedController
 		// TODO: TryCatch
 		string[] directories = _fileAccess.GetDirectories("Logs");
 		return Content(JsonSerializer.Serialize(directories));
+	}
+	
+	// TODO: Docs
+	[HttpPost("addTrain")]
+	public IActionResult AddTrain([FromHeader] string trainName, [FromHeader] string authentikUsername, [FromHeader] string trainId)
+	{
+		Console.WriteLine($"Creating new train as {trainName} with authentik username {authentikUsername} and train ID {trainId}.");
+		_deviceDataAccess.CreateTrain(trainName, authentikUsername, trainId);
+		return Ok();
+	}
+	
+	// TODO: Docs
+	[HttpGet("getAllTrains")]
+	public IActionResult GetAllTrains()
+	{
+		return Content(JsonSerializer.Serialize(_deviceDataAccess.GetAllTrains()));
 	}
 
 	// This has to be reported every 5 minutes, otherwise a device will be marked as offline/no signal/not found (idk yet)

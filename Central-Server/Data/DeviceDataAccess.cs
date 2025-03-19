@@ -23,6 +23,7 @@ public class DeviceDataAccess : IDisposable
 		collection.EnsureIndex(x => x.Username);
 	}
 	
+	// Username is the authentik username
 	public void UpdateStatus(string username, string status)
 	{
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
@@ -47,11 +48,34 @@ public class DeviceDataAccess : IDisposable
 		_database.Checkpoint();
 	}
 	
+	// Username is the authentik username
 	public DeviceStatus? GetStatusByName(string username)
 	{
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 
 		return collection.FindOne(x => x.Username == username);
+	}
+
+	public void CreateTrain(string trainName, string authentikUsername, string trainId)
+	{
+		ILiteCollection<TrainData> collection = _database.GetCollection<TrainData>("TrainData");
+		
+		TrainData newLog = new TrainData
+		{
+			Name = trainName,
+			AuthentikUsername = authentikUsername,
+			TrainId = trainId,
+			CreatedOn = DateTime.Now
+		};
+		collection.Insert(newLog);
+		
+		_database.Checkpoint();
+	}
+
+	public List<TrainData> GetAllTrains()
+	{
+		ILiteCollection<TrainData> collection = _database.GetCollection<TrainData>("TrainData");
+		return collection.FindAll().ToList();
 	}
 
 	public void Dispose()

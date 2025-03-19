@@ -149,11 +149,6 @@ public class KeyDataAccess : IDisposable
 		return collection.FindOne(x => x.SerialNumber == serialNumber).Secret;
 	}
 
-	public void Dispose()
-	{
-		_database.Dispose();
-	}
-
 	public bool Validate(string serialNumber, string code, DateTime timestamp)
 	{
 		string secret = GetSecret(serialNumber);
@@ -162,5 +157,10 @@ public class KeyDataAccess : IDisposable
 		Totp totp = new Totp(secretBytes, 15, OtpHashMode.Sha256);
 		
 		return totp.ComputeTotp(timestamp) == code;
+	}
+
+	public void Dispose()
+	{
+		_database.Dispose();
 	}
 }
