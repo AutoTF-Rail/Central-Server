@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Central_Server.Extensions;
 
-public class ProtectedController : ControllerBase, IActionFilter
+public class AuthentikController : ControllerBase, IActionFilter
 {
 	protected string Username { get; private set; } = null!;
 	
@@ -34,7 +34,7 @@ public class ProtectedController : ControllerBase, IActionFilter
 #endif
 			deviceName = headers["X-Authentik-Username"].ToString();
                 
-			// TODO: Implement proper session auth
+			// We don't need to further validate this, because all incoming traffic is being routed through authentik anyways, so this is secure enough.
 			return !string.IsNullOrEmpty(deviceName);
 		}
 		catch

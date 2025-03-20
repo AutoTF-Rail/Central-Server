@@ -16,7 +16,7 @@ public class Program
 
 		builder.Services.AddControllers(options =>
 		{
-			options.Filters.Add<ProtectedController>();
+			options.Filters.Add<AuthentikController>();
 		});
 
 		FileAccess acc = new FileAccess();

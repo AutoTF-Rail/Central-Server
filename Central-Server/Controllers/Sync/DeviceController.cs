@@ -11,7 +11,7 @@ namespace Central_Server.Controllers.Sync;
 
 [ApiController]
 [Route("/sync/device")]
-public class DeviceController : ProtectedController
+public class DeviceController : AuthentikController
 {
 	private readonly DeviceDataAccess _deviceDataAccess;
 	private readonly FileAccess _fileAccess;
