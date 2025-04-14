@@ -224,6 +224,15 @@ public class DeviceController : AuthentikController
 	}
 	
 	// TODO: Docs
+	[HttpPost("deleteTrain")]
+	public IActionResult DeleteTrain([FromQuery, Required] string trainName, [FromQuery, Required] string authentikUsername, [FromQuery, Required] string trainId)
+	{
+		_logger.Log($"Removing train with name {trainName} and with authentik username {authentikUsername} and train ID {trainId}.");
+		_deviceDataAccess.DeleteTrain(trainName, authentikUsername, trainId);
+		return Ok();
+	}
+	
+	// TODO: Docs
 	[HttpGet("getAllTrains")]
 	public IActionResult GetAllTrains()
 	{

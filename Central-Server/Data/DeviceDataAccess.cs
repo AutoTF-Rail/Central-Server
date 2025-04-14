@@ -72,6 +72,14 @@ public class DeviceDataAccess : IDisposable
 		_database.Checkpoint();
 	}
 
+	public void DeleteTrain(string trainName, string authentikUsername, string trainId)
+	{
+		ILiteCollection<TrainData> collection = _database.GetCollection<TrainData>("TrainData");
+		collection.DeleteMany(x => x.Name == trainName && x.AuthentikUsername == authentikUsername && x.TrainId == trainId);
+		
+		_database.Checkpoint();
+	}
+
 	public List<TrainData> GetAllTrains()
 	{
 		ILiteCollection<TrainData> collection = _database.GetCollection<TrainData>("TrainData");
