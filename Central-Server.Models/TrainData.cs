@@ -6,4 +6,5 @@ public class TrainData
 	public string AuthentikUsername { get; set; }
 	public string TrainId { get; set; }
 	public DateTime CreatedOn { get; set; }
+	public Guid UniqueId { get; set; }
 }

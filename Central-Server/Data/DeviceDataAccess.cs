@@ -65,17 +65,18 @@ public class DeviceDataAccess : IDisposable
 			Name = trainName,
 			AuthentikUsername = authentikUsername,
 			TrainId = trainId,
-			CreatedOn = DateTime.Now
+			CreatedOn = DateTime.Now,
+			UniqueId = Guid.NewGuid()
 		};
 		collection.Insert(newLog);
 		
 		_database.Checkpoint();
 	}
 
-	public void DeleteTrain(string trainName, string authentikUsername, string trainId)
+	public void DeleteTrain(Guid id)
 	{
 		ILiteCollection<TrainData> collection = _database.GetCollection<TrainData>("TrainData");
-		collection.DeleteMany(x => x.Name == trainName && x.AuthentikUsername == authentikUsername && x.TrainId == trainId);
+		collection.DeleteMany(x => x.UniqueId == id);
 		
 		_database.Checkpoint();
 	}

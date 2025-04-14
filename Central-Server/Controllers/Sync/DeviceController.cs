@@ -225,10 +225,10 @@ public class DeviceController : AuthentikController
 	
 	// TODO: Docs
 	[HttpPost("deleteTrain")]
-	public IActionResult DeleteTrain([FromQuery, Required] string trainName, [FromQuery, Required] string authentikUsername, [FromQuery, Required] string trainId)
+	public IActionResult DeleteTrain([FromQuery, Required] Guid id)
 	{
-		_logger.Log($"Removing train with name {trainName} and with authentik username {authentikUsername} and train ID {trainId}.");
-		_deviceDataAccess.DeleteTrain(trainName, authentikUsername, trainId);
+		_logger.Log($"Removing train with id {id.ToString()}.");
+		_deviceDataAccess.DeleteTrain(id);
 		return Ok();
 	}
 	
