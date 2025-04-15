@@ -79,6 +79,9 @@ The API can be reached at https://\<evuName\>.server.autotf.de
 - **`POST /sync/device/addTrain`**   
   Adds a new train by the given name, auth name, and train id.
 
+- **`POST /sync/device/editTrain`**  
+  Edits a train by the given id to change its name, auth username, and train id.
+
 - **`POST /sync/device/deleteTrain`**  
   Deletes a train by the given id.
 

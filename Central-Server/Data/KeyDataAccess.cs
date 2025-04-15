@@ -42,7 +42,7 @@ public class KeyDataAccess : IDisposable
 	{
 		ILiteCollection<object> collection = _database.GetCollection<object>("DataSettings");
 		BsonDocument entity = new BsonDocument { ["Date"] = DateTime.Now };
-		collection.Update(LastChangedId,  entity);
+		collection.Update(LastChangedId, entity);
 	}
 
 	public DateTime GetLastChanged()

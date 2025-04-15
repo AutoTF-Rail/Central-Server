@@ -1,0 +1,43 @@
+services:
+  central-server:
+    container_name: CentralServer-ExampleEvu
+    image: 172.17.0.3:5001/repository/docker-autotf/central-server:latest
+    restart: unless-stopped
+    ports:
+      - "7480:8080"
+      - "7481:8081"
+    build:
+      context: .
+      dockerfile: Central-Server/Dockerfile
+    volumes:
+      - /etc/AutoTf/CentralServer/ExampleEvu:/Data
+    environment:
+      evuName: "ExampleEvu"
+    networks:
+      centralServerNetwork:
+        ipv4_address: 192.168.1.2
+  central-server2:
+    container_name: CentralServer-ExampleEvu2
+    image: 172.17.0.3:5001/repository/docker-autotf/central-server:latest
+    restart: unless-stopped
+    ports:
+      - "7490:8080"
+      - "7491:8081"
+    build:
+      context: .
+      dockerfile: Central-Server/Dockerfile
+    volumes:
+      - /etc/AutoTf/CentralServer/ExampleEvu2:/Data
+    environment:
+      evuName: "ExampleEvu2"
+    networks:
+      centralServerNetwork:
+        ipv4_address: 192.168.1.3
+
+
+networks:
+  centralServerNetwork:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24

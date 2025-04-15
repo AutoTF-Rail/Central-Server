@@ -1,6 +1,5 @@
 using Central_Server.Models;
 using LiteDB;
-using Microsoft.VisualBasic.FileIO;
 
 namespace Central_Server.Data;
 
@@ -60,6 +59,25 @@ public class DeviceDataAccess : IDisposable
 		collection.Insert(newLog);
 		
 		_database.Checkpoint();
+	}
+
+	public bool EditTrain(Guid id, string newTrainName, string newAuthUsername, string newTrainId)
+	{
+		ILiteCollection<TrainData> collection = _database.GetCollection<TrainData>("TrainData");
+
+		TrainData? train = collection.FindOne(x => x.UniqueId == id);
+		
+		if (train == null)
+			return false;
+
+		train.Name = newTrainName;
+		train.AuthentikUsername = newAuthUsername;
+		train.TrainId = newTrainId;
+		collection.Update(train);
+		
+		_database.Checkpoint();
+
+		return true;
 	}
 
 	public void DeleteTrain(Guid id)

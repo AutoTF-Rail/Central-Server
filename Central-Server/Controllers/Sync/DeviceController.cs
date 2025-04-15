@@ -73,6 +73,17 @@ public class DeviceController : AuthentikController
 		return Ok();
 	}
 	
+	[HttpPost("editTrain")]
+	public IActionResult EditTrain([FromQuery, Required] Guid id, [FromQuery, Required] string newTrainName, [FromQuery, Required] string newAuthUsername, [FromQuery, Required] string newTrainId)
+	{
+		_logger.Log($"Editing train {id.ToString()} with new name as {newTrainName} and new auth name {newAuthUsername} and new train id {newTrainId}.");
+		
+		if (_deviceDataAccess.EditTrain(id, newTrainName, newAuthUsername, newTrainId))
+			return Ok();
+
+		return NotFound();
+	}
+	
 	[HttpPost("deleteTrain")]
 	public IActionResult DeleteTrain([FromQuery, Required] Guid id)
 	{
