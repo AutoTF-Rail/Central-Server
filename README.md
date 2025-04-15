@@ -17,6 +17,9 @@ The status of the AutoTF infrastructure that hosts the central server can be see
 **All info given in this repository are without warranty. AutoTF and individiuals representing AutoTF are not liable for any damanges occuring due to the contents unless specified otherwise in a contract.**
 
 
+---
+
+
 ## API
 
 The API can be reached at https://\<evuName\>.server.autotf.de
@@ -31,7 +34,6 @@ The API can be reached at https://\<evuName\>.server.autotf.de
 - **`GET /tokenStep`**  
   Redirects the user to a local endpoint at `http://localhost:5000/token` to log in to the manager app.
 
----
 
 ## Sync Endpoints
 
