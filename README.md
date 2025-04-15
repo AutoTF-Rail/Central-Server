@@ -11,6 +11,9 @@ It's part of the product "Central Bridge" and is neccessary to further configure
 A desktop client for this API is being developed at [AutoTF-Rail/AutoTf.Manager](https://github.com/AutoTF-Rail/AutoTf.Manager.git).
 
 
+The status of the AutoTF infrastructure that hosts the central server can be seen at [status.autotf.de](https://status.autotf.de).
+
+
 **All info given in this repository are without warranty. AutoTF and individiuals representing AutoTF are not liable for any damanges occuring due to the contents unless specified otherwise in a contract.**
 
 
