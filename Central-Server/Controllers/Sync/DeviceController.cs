@@ -28,7 +28,8 @@ public class DeviceController : AuthentikController
 	[HttpGet("lastsynced")]
 	public IActionResult LastSynced([FromQuery, Required] string deviceName)
 	{
-		_logger.Log($"Getting last synced date for: {deviceName}.");
+		_logger.Log($"Getting last synced date for {deviceName}.");
+		
 		DeviceStatus? status = _deviceDataAccess.GetStatusByName(deviceName);
 		
 		if (status == null)
@@ -40,13 +41,14 @@ public class DeviceController : AuthentikController
 	[HttpGet("status")]
 	public IActionResult Status([FromQuery, Required] string deviceName)
 	{
-		_logger.Log($"Getting status for: {deviceName}.");
+		_logger.Log($"Getting status for {deviceName}.");
+		
 		DeviceStatus? status = _deviceDataAccess.GetStatusByName(deviceName);
 		
 		if (status == null)
 			return BadRequest("Device not found.");
 		
-		if ((DateTime.Now - status.Timestamp) > TimeSpan.FromMinutes(5))
+		if (DateTime.Now - status.Timestamp > TimeSpan.FromMinutes(5))
 			return Content("Offline");
 
 		return Content(status.Status);
@@ -66,6 +68,7 @@ public class DeviceController : AuthentikController
 	public IActionResult AddTrain([FromQuery, Required] string trainName, [FromQuery, Required] string authentikUsername, [FromQuery, Required] string trainId)
 	{
 		_logger.Log($"Creating new train as {trainName} with authentik username {authentikUsername} and train ID {trainId}.");
+		
 		_deviceDataAccess.CreateTrain(trainName, authentikUsername, trainId);
 		return Ok();
 	}
@@ -88,9 +91,9 @@ public class DeviceController : AuthentikController
 	[HttpPost("updatestatus")]
 	public IActionResult UpdateStatus([FromBody]string deviceStatus)
 	{
-		_logger.Log($"Updating status for: {Username} as {deviceStatus}.");
+		_logger.Log($"Updating status for {Username} as {deviceStatus}.");
+		
 		_deviceDataAccess.UpdateStatus(Username, deviceStatus);
-
 		return Ok();
 	}
 }

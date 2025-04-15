@@ -12,13 +12,11 @@ namespace Central_Server.Controllers.Sync.Device;
 [Route("/sync/device/video")]
 public class VideoController : AuthentikController
 {
-    private readonly DeviceDataAccess _deviceDataAccess;
     private readonly FileAccess _fileAccess;
     private readonly Logger _logger;
 
-    public VideoController(DeviceDataAccess deviceDataAccess, FileAccess fileAccess, Logger logger)
+    public VideoController(FileAccess fileAccess, Logger logger)
     {
-        _deviceDataAccess = deviceDataAccess;
         _fileAccess = fileAccess;
         _logger = logger;
     }
@@ -28,7 +26,7 @@ public class VideoController : AuthentikController
     {
         try
         {
-            _logger.Log($"Video index requested for: {deviceName}.");
+            _logger.Log($"Video index requested for {deviceName}.");
 
             string dir = Path.Combine("Videos", deviceName);
 			
@@ -41,7 +39,7 @@ public class VideoController : AuthentikController
         }
         catch (Exception e)
         {
-            _logger.Log("Could not provide video index.");
+            _logger.Log("Could not provide video index:");
             _logger.Log(e.ToString());
         }
 
@@ -53,7 +51,7 @@ public class VideoController : AuthentikController
     {
         try
         {
-            _logger.Log($"Video requested for: {deviceName} at {date}.");
+            _logger.Log($"Video requested for {deviceName} at {date}.");
 
             string dir = Path.Combine("Videos", deviceName, date + ".mp4");
 			
@@ -72,30 +70,20 @@ public class VideoController : AuthentikController
     }
 	
     [HttpPost("upload")]
-    public IActionResult UploadVideo([FromForm] IFormFile file)
+    public IActionResult UploadVideo([FromForm, Required] IFormFile file)
     {
         try
         {
-            if (file.Length == 0)
-                return BadRequest("Please supply a video in the body to upload");
+            _logger.Log($"{Username} requested to upload video \"{file.FileName}\".");
 			
-            try
-            {
-                _logger.Log($"SYNC: {Username} requested to upload video \"{file.FileName}\".");
-				
-                _fileAccess.SaveVideo(Path.Combine("Videos", Username, file.FileName), file);
-				
-                _logger.Log($"SYNC: Successfully uploaded video \"{file.FileName}\".");
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            _fileAccess.SaveVideo(Path.Combine("Videos", Username, file.FileName), file);
+			
+            _logger.Log($"Successfully uploaded video \"{file.FileName}\".");
+            return Ok();
         }
         catch (Exception e)
         {
-            _logger.Log("SYNC: ERROR: Could not upload video:");
+            _logger.Log("ERROR: Could not upload video:");
             _logger.Log(e.ToString());
         }
 

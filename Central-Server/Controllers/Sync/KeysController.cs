@@ -23,6 +23,7 @@ public class KeysController : ControllerBase
 		{
 			if (!_keyDataAccess.CheckForKey(serialNumber))
 				return NotFound();
+			
 			if (!_keyDataAccess.Validate(serialNumber, code, timestamp))
 				return Unauthorized();
 

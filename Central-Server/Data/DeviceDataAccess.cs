@@ -6,6 +6,7 @@ namespace Central_Server.Data;
 
 public class DeviceDataAccess : IDisposable
 {
+	// ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
 	private readonly string _dataDir;
 	private readonly LiteDatabase _database;
 	
@@ -16,6 +17,7 @@ public class DeviceDataAccess : IDisposable
 #else
 		_dataDir = Path.Combine(SpecialDirectories.MyDocuments, "AutoTf/CentralServer");
 		Directory.CreateDirectory(_dataDir);
+		
 		_dataDir += "/DeviceData.db";
 #endif
 		_database = new LiteDatabase(_dataDir);
@@ -23,12 +25,12 @@ public class DeviceDataAccess : IDisposable
 		collection.EnsureIndex(x => x.Username);
 	}
 	
-	// Username is the authentik username
-	public void UpdateStatus(string username, string status)
+	public void UpdateStatus(string authentikUsername, string status)
 	{
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 
-		DeviceStatus? existingLog = collection.FindOne(x => x.Username == username);
+		DeviceStatus? existingLog = collection.FindOne(x => x.Username == authentikUsername);
+		
 		if (existingLog != null)
 		{
 			existingLog.Timestamp = DateTime.UtcNow;
@@ -37,37 +39,24 @@ public class DeviceDataAccess : IDisposable
 		}
 		else
 		{
-			DeviceStatus newLog = new DeviceStatus
-			{
-				Username = username,
-				Timestamp = DateTime.UtcNow,
-				Status = status
-			};
+			DeviceStatus newLog = new DeviceStatus(authentikUsername, DateTime.UtcNow, status);
 			collection.Insert(newLog);
 		}
 		_database.Checkpoint();
 	}
 	
-	// Username is the authentik username
-	public DeviceStatus? GetStatusByName(string username)
+	public DeviceStatus? GetStatusByName(string authentikUsername)
 	{
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 
-		return collection.FindOne(x => x.Username == username);
+		return collection.FindOne(x => x.Username == authentikUsername);
 	}
 
 	public void CreateTrain(string trainName, string authentikUsername, string trainId)
 	{
 		ILiteCollection<TrainData> collection = _database.GetCollection<TrainData>("TrainData");
-		
-		TrainData newLog = new TrainData
-		{
-			Name = trainName,
-			AuthentikUsername = authentikUsername,
-			TrainId = trainId,
-			CreatedOn = DateTime.Now,
-			UniqueId = Guid.NewGuid()
-		};
+
+		TrainData newLog = new TrainData(trainName, authentikUsername, trainId, DateTime.Now, Guid.NewGuid());
 		collection.Insert(newLog);
 		
 		_database.Checkpoint();

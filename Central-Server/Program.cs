@@ -5,7 +5,7 @@ using FileAccess = Central_Server.Data.FileAccess;
 
 namespace Central_Server;
 
-public class Program
+public abstract class Program
 {
 	public static void Main(string[] args)
 	{

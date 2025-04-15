@@ -32,10 +32,13 @@ public class AuthentikController : ControllerBase, IActionFilter
 #if DEBUG
 			return true;
 #endif
+			// ReSharper disable once HeuristicUnreachableCode
+#pragma warning disable CS0162 // Unreachable code detected
 			deviceName = headers["X-Authentik-Username"].ToString();
                 
 			// We don't need to further validate this, because all incoming traffic is being routed through authentik anyways, so this is secure enough.
 			return !string.IsNullOrEmpty(deviceName);
+#pragma warning restore CS0162 // Unreachable code detected
 		}
 		catch
 		{

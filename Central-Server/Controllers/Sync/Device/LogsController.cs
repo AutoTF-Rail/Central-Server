@@ -25,7 +25,7 @@ public class LogsController : AuthentikController
     {
         try
         {
-            _logger.Log($"Logs index requested for: {deviceName}.");
+            _logger.Log($"Logs index requested for {deviceName}.");
 
             string dir = Path.Combine("Logs", deviceName);
 			
@@ -38,7 +38,7 @@ public class LogsController : AuthentikController
         }
         catch (Exception e)
         {
-            _logger.Log("Could not provide log index.");
+            _logger.Log("Could not provide log index:");
             _logger.Log(e.ToString());
         }
 
@@ -50,7 +50,7 @@ public class LogsController : AuthentikController
     {
         try
         {
-            _logger.Log($"Logs requested for: {deviceName} at {date}.");
+            _logger.Log($"Logs requested for {deviceName} at {date}.");
 
             string dir = Path.Combine("Logs", deviceName, date + ".txt");
 			
@@ -69,24 +69,21 @@ public class LogsController : AuthentikController
     }
 	
     [HttpPost("upload")]
-    public IActionResult UploadLogs([FromBody] string[] logs)
+    public IActionResult UploadLogs([FromBody, Required] string[] logs)
     {
         try
         {
-            if (logs.Length == 0)
-                return BadRequest("Please supply logs in the body to upload");
-			
-			
-            _logger.Log($"SYNC: {Username} requested to upload logs.");
+            _logger.Log($"{Username} requested to upload logs.");
+            
             _fileAccess.AppendAllLines(Path.Combine("Logs", Username, DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
                 logs);
 			
-            _logger.Log($"SYNC: Successfully uploaded logs for {Username}.");
+            _logger.Log($"Successfully uploaded logs for {Username}.");
             return Ok();
         }
         catch (Exception e)
         {
-            _logger.Log("SYNC: ERROR: Could not upload logs:");
+            _logger.Log("ERROR: Could not upload logs:");
             _logger.Log(e.ToString());
         }
 

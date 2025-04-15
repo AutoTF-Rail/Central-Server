@@ -1,12 +1,12 @@
 using Central_Server.Models;
 using LiteDB;
 using Microsoft.VisualBasic.FileIO;
-using OtpNet;
 
 namespace Central_Server.Data;
 
 public class MacAddrAccess
 {
+	// ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
 	private readonly string _dataDir;
 	private readonly LiteDatabase _database;
 	
@@ -25,7 +25,6 @@ public class MacAddrAccess
 		ILiteCollection<MacAddressEntity> collection = _database.GetCollection<MacAddressEntity>("macAddrData");
 		collection.EnsureIndex(x => x.Id);
 		
-		ILiteCollection<object> settings = _database.GetCollection<object>("DataSettings");
 		InitializeDatabase();
 	}
 
@@ -62,10 +61,7 @@ public class MacAddrAccess
 	{
 		ILiteCollection<MacAddressEntity> collection = _database.GetCollection<MacAddressEntity>("macAddrData");
 
-		collection.Insert(new MacAddressEntity()
-		{
-			Address = address
-		});
+		collection.Insert(new MacAddressEntity(address));
 
 		UpdateLastChanged();
 		_database.Checkpoint();

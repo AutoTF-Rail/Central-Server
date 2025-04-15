@@ -6,6 +6,9 @@ namespace Central_Server.Controllers;
 [Route("/")]
 public class RootController : ControllerBase
 {
+	/// <summary>
+	/// Test endpoint
+	/// </summary>
 	[HttpGet("/Bluba")]
 	public IActionResult Index()
 	{
@@ -34,6 +37,10 @@ public class RootController : ControllerBase
 		return Content("Tokens not found.");
 	}
 }
+
+/// <summary>
+/// Test controller
+/// </summary>
 [Route("/meow")]
 public class MeowController : ControllerBase
 {

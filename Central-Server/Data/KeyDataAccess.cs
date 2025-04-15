@@ -1,4 +1,3 @@
-using System.Text;
 using Central_Server.Models;
 using LiteDB;
 using Microsoft.VisualBasic.FileIO;
@@ -8,6 +7,7 @@ namespace Central_Server.Data;
 
 public class KeyDataAccess : IDisposable
 {
+	// ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
 	private readonly string _dataDir;
 	private readonly LiteDatabase _database;
 	

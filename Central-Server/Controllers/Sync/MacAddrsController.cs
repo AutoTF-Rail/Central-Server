@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using AutoTf.Logging;
 using Central_Server.Data;
@@ -33,17 +34,12 @@ public class MacAddrsController : ControllerBase
 	}
 
 	[HttpPost("addAddress")]
-	public IActionResult AddAddress([FromBody] string address)
+	public IActionResult AddAddress([FromBody, Required] string address)
 	{
 		try
 		{
-			if (string.IsNullOrEmpty(address))
-			{
-				_logger.Log("Could not add address due to it being null or empty: " + address);
-				return NotFound();
-			}
-
-			_logger.Log("Adding Address: " + address);
+			_logger.Log($"Adding Address {address}.");
+			
 			_macAddrAccess.CreateAddress(address);
 			return Ok();
 		}
@@ -53,6 +49,6 @@ public class MacAddrsController : ControllerBase
 			_logger.Log(e.ToString());
 		}
 
-		return BadRequest();
+		return BadRequest("An error occured while adding the mac address.");
 	}
 }
