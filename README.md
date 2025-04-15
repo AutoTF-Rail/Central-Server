@@ -14,6 +14,8 @@ A desktop client for this API is being developed at [AutoTF-Rail/AutoTf.Manager]
 The status of the AutoTF infrastructure that hosts the central server can be seen at [status.autotf.de](https://status.autotf.de).
 
 
+Although the master branch is the most active working version of the central servers, some servers might not be updated yet.
+
 **All info given in this repository are without warranty. AutoTF and individiuals representing AutoTF are not liable for any damanges occuring due to the contents unless specified otherwise in a contract.**
 
 
