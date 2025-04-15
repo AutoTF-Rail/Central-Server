@@ -16,6 +16,8 @@ The status of the AutoTF infrastructure that hosts the central server can be see
 
 Although the master branch is the most active working version of the central servers, some servers might not be updated yet.
 
+The ongoing development is being done on the develop branch, and merged when ready.
+
 **All info given in this repository are without warranty. AutoTF and individiuals representing AutoTF are not liable for any damanges occuring due to the contents unless specified otherwise in a contract.**
 
 
