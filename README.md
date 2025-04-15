@@ -26,7 +26,7 @@ The ongoing development is being done on the develop branch, and merged when rea
 
 ## API
 
-The API can be reached at `https://&lt;evuName&gt;.server.autotf.de`
+The API can be reached at `https://<evuName>.server.autotf.de`
 
 ### Available endpoints:
 
