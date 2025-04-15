@@ -62,36 +62,48 @@ The API can be reached at https://\<evuName\>.server.autotf.de
 
 ### Device Management
 
-- **`GET /sync/device/getvideo`**  
-  Returns a downloadable video from a specified device and date.
-
-- **`GET /sync/device/indexvideos`**  
-  Returns an index of all available videos for a specified device.
-
-- **`POST /sync/device/uploadvideo`**  
-  Uploads a video.
-
 - **`GET /sync/device/lastsynced`**  
   Retrieves the last sync date for a device.
 
 - **`GET /sync/device/status`**  
   Gets the status of a specified device (Online/Offline).
 
-- **`POST /sync/device/uploadlogs`**  
-  Uploads logs.
+- **`GET /sync/device/devices [Obsolete] `**   
+  Returns an index of all available/known devices. Please use `/sync/device/getAllTrains`
 
-- **`GET /sync/device/getlogs`**  
-  Retrieves logs from a specified device for a specific date.
+- **`POST /sync/device/addTrain`**   
+  Adds a new train by the given name, auth name, and train id.
 
-- **`GET /sync/device/status`**  
-  Returns an index of all logs available for a given device.
+- **`POST /sync/device/deleteTrain`**  
+  Deletes a train by the given id.
 
-- **`GET /sync/device/devices`**  
-  Returns an index of all available/known devices.
+- **`POST /sync/device/getAllTrains`**  
+  Returns a list of all available trains.
 
 - **`POST /sync/device/updatestatus`**  
   Updates the status of a device (itself).
 
+  ### Video Management
+
+  - **`GET /sync/device/video/index`**  
+    Returns an index of all available videos for a specified device.
+
+  - **`GET /sync/device/video/download`**  
+    Returns a downloadable video from a specified device and date.
+
+  - **`POST /sync/device/video/upload`**  
+    Uploads a video.
+  
+  ### Logs Management
+
+  - **`GET /sync/device/logs/index`**  
+    Returns an index of all available logs for a specified device.
+
+  - **`GET /sync/device/logs/download`**  
+    Retrieves logs from a specified device for a specific date.
+
+  - **`POST /sync/device/logs/upload`**  
+    Uploads logs.
 
 ## Info & Contributions
 
