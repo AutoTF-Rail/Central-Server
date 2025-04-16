@@ -20,20 +20,20 @@ public class MacAddrsController : ControllerBase
 	}
 	
 	
-	[HttpGet("lastmacaddrsupdate")]
+	[HttpGet("lastUpdate")]
 	public IActionResult LastMacAddressUpdate()
 	{
 		return Content(_macAddrAccess.GetLastChanged().ToString("dd.MM.yyyy HH:mm:ss"));
 	}
 
-	[HttpGet("macAddress")]
+	[HttpGet("all")]
 	public IActionResult SyncMacAddresses()
 	{
 		// If last changed value is never than what the client has, we send all back
 		return Content(JsonSerializer.Serialize(_macAddrAccess.GetAll()));
 	}
 
-	[HttpPost("addAddress")]
+	[HttpPost("add")]
 	public IActionResult AddAddress([FromBody, Required] string address)
 	{
 		try
