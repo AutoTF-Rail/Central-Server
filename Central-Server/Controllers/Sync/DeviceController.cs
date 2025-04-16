@@ -64,6 +64,12 @@ public class DeviceController : AuthentikController
 		return Content(JsonSerializer.Serialize(directories));
 	}
 	
+	[HttpGet("getAllTrains")]
+	public IActionResult GetAllTrains()
+	{
+		return Content(JsonSerializer.Serialize(_deviceDataAccess.GetAllTrains()));
+	}
+	
 	[HttpPost("addTrain")]
 	public IActionResult AddTrain([FromQuery, Required] string trainName, [FromQuery, Required] string authentikUsername, [FromQuery, Required] string trainId)
 	{
@@ -90,12 +96,6 @@ public class DeviceController : AuthentikController
 		_logger.Log($"Removing train with id {id.ToString()}.");
 		_deviceDataAccess.DeleteTrain(id);
 		return Ok();
-	}
-	
-	[HttpGet("getAllTrains")]
-	public IActionResult GetAllTrains()
-	{
-		return Content(JsonSerializer.Serialize(_deviceDataAccess.GetAllTrains()));
 	}
 
 	// This has to be reported every 5 minutes, otherwise a device will be marked as offline/no signal/not found (idk yet)

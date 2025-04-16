@@ -36,13 +36,13 @@ public class KeysController : ControllerBase
 		}
 	}
 	
-	[HttpGet("lastkeysupdate")]
+	[HttpGet("lastupdate")]
 	public IActionResult LastKeysUpdate()
 	{
 		return Content(_keyDataAccess.GetLastChanged().ToString("dd.MM.yyyy HH:mm:ss"));
 	}
 
-	[HttpGet("newkeys")]
+	[HttpGet("new")]
 	public IActionResult SyncKeys([FromQuery, Required] string lastSynced)
 	{
 		try
@@ -55,7 +55,7 @@ public class KeysController : ControllerBase
 		}
 	}
 
-	[HttpGet("allkeys")]
+	[HttpGet("all")]
 	public IActionResult SyncAllKeys()
 	{
 		try
@@ -68,7 +68,7 @@ public class KeysController : ControllerBase
 		}
 	}
 
-	[HttpPost("addkey")]
+	[HttpPost("add")]
 	public IActionResult SyncKeys([FromQuery, Required] string serialNumber, [FromQuery, Required] string secret)
 	{
 		try
