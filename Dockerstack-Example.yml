@@ -16,6 +16,8 @@ services:
     networks:
       centralServerNetwork:
         ipv4_address: 192.168.1.2
+      authinstall_default: {}
+      
   central-server2:
     container_name: CentralServer-ExampleEvu2
     image: 172.17.0.3:5001/repository/docker-autotf/central-server:latest
@@ -33,6 +35,7 @@ services:
     networks:
       centralServerNetwork:
         ipv4_address: 192.168.1.3
+      authinstall_default: {}
 
 
 networks:
@@ -41,3 +44,5 @@ networks:
     ipam:
       config:
         - subnet: 192.168.1.0/24
+  authinstall_default:
+    external: true 
