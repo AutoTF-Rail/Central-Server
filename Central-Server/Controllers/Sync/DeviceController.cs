@@ -71,7 +71,7 @@ public class DeviceController : AuthentikController
 	}
 	
 	[HttpPost("addTrain")]
-	public IActionResult AddTrain([FromQuery, Required] string trainName, [FromQuery, Required] string authentikUsername, [FromQuery, Required] string trainId)
+	public IActionResult AddTrain([FromBody, Required] string trainName, [FromBody, Required] string authentikUsername, [FromBody, Required] string trainId)
 	{
 		_logger.Log($"Creating new train as {trainName} with authentik username {authentikUsername} and train ID {trainId}.");
 		
@@ -80,7 +80,7 @@ public class DeviceController : AuthentikController
 	}
 	
 	[HttpPost("editTrain")]
-	public IActionResult EditTrain([FromQuery, Required] Guid id, [FromQuery, Required] string newTrainName, [FromQuery, Required] string newAuthUsername, [FromQuery, Required] string newTrainId)
+	public IActionResult EditTrain([FromBody, Required] Guid id, [FromBody, Required] string newTrainName, [FromBody, Required] string newAuthUsername, [FromBody, Required] string newTrainId)
 	{
 		_logger.Log($"Editing train {id.ToString()} with new name as {newTrainName} and new auth name {newAuthUsername} and new train id {newTrainId}.");
 		
@@ -91,7 +91,7 @@ public class DeviceController : AuthentikController
 	}
 	
 	[HttpPost("deleteTrain")]
-	public IActionResult DeleteTrain([FromQuery, Required] Guid id)
+	public IActionResult DeleteTrain([FromBody, Required] Guid id)
 	{
 		_logger.Log($"Removing train with id {id.ToString()}.");
 		_deviceDataAccess.DeleteTrain(id);
@@ -100,7 +100,7 @@ public class DeviceController : AuthentikController
 
 	// This has to be reported every 5 minutes, otherwise a device will be marked as offline/no signal/not found (idk yet)
 	[HttpPost("updatestatus")]
-	public IActionResult UpdateStatus([FromBody]string deviceStatus)
+	public IActionResult UpdateStatus([FromBody] string deviceStatus)
 	{
 		_logger.Log($"Updating status for {Username} as {deviceStatus}.");
 		
