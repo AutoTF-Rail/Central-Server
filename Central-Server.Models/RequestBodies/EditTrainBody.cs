@@ -4,6 +4,14 @@ namespace Central_Server.Models.RequestBodies;
 
 public class EditTrainBody
 {
+    public EditTrainBody(Guid id, string trainName, string authentikUsername, string trainId)
+    {
+        Id = id;
+        TrainName = trainName;
+        AuthentikUsername = authentikUsername;
+        TrainId = trainId;
+    }
+
     [Required]
     public Guid Id { get; set; }
     
