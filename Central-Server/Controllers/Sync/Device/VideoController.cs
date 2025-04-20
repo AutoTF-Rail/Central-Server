@@ -14,28 +14,34 @@ public class VideoController : AuthentikController
 {
     private readonly FileAccess _fileAccess;
     private readonly Logger _logger;
-
-    public VideoController(FileAccess fileAccess, Logger logger)
+    private readonly DeviceDataAccess _deviceDataAccess;
+    public VideoController(FileAccess fileAccess, Logger logger, DeviceDataAccess deviceDataAccess)
     {
         _fileAccess = fileAccess;
         _logger = logger;
+        _deviceDataAccess = deviceDataAccess;
     }
 	
     [HttpGet("index")]
-    public IActionResult IndexVideos([FromQuery, Required] string deviceName)
+    public ActionResult<List<string>> IndexVideos([FromQuery, Required] string deviceName)
     {
         try
         {
             _logger.Log($"Video index requested for {deviceName}.");
 
             string dir = Path.Combine("Videos", deviceName);
-			
-            if (!_fileAccess.DirectoryExists(dir))
+            
+            bool dirExists = _fileAccess.DirectoryExists(dir);
+            
+            if (!dirExists && !_deviceDataAccess.TrainExists(deviceName))
                 return NotFound("Could not find device.");
+
+            if (!dirExists)
+                return new List<string>();
 
             string[] files = _fileAccess.GetFiles(dir);
 
-            return Content(JsonSerializer.Serialize(files.Select(Path.GetFileNameWithoutExtension)));
+            return files.Select(Path.GetFileNameWithoutExtension).ToList()!;
         }
         catch (Exception e)
         {
