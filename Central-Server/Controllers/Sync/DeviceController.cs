@@ -49,8 +49,9 @@ public class DeviceController : AuthentikController
 		if (status == null && !_deviceDataAccess.TrainExists(deviceName))
 			return BadRequest("Device not found.");
 
+		// Train exists, but never started up/didn't async yet.
 		if (status == null)
-			return Content("Offline");
+			return Content("Unknown");
 		
 		if (DateTime.Now - status.Timestamp > TimeSpan.FromMinutes(5))
 			return Content("Offline");
