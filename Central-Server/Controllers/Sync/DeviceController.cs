@@ -4,6 +4,7 @@ using AutoTf.Logging;
 using Central_Server.Data;
 using Central_Server.Extensions;
 using Central_Server.Models;
+using Central_Server.Models.RequestBodies;
 using Microsoft.AspNetCore.Mvc;
 using FileAccess = Central_Server.Data.FileAccess;
 
@@ -71,20 +72,20 @@ public class DeviceController : AuthentikController
 	}
 	
 	[HttpPost("addTrain")]
-	public IActionResult AddTrain([FromBody, Required] string trainName, [FromBody, Required] string authentikUsername, [FromBody, Required] string trainId)
+	public IActionResult AddTrain([FromBody] AddTrainBody body)
 	{
-		_logger.Log($"Creating new train as {trainName} with authentik username {authentikUsername} and train ID {trainId}.");
+		_logger.Log($"Creating new train as {body.TrainName} with authentik username {body.AuthentikUsername} and train ID {body.TrainId}.");
 		
-		_deviceDataAccess.CreateTrain(trainName, authentikUsername, trainId);
+		_deviceDataAccess.CreateTrain(body.TrainName, body.AuthentikUsername, body.TrainId);
 		return Ok();
 	}
 	
 	[HttpPost("editTrain")]
-	public IActionResult EditTrain([FromBody, Required] Guid id, [FromBody, Required] string newTrainName, [FromBody, Required] string newAuthUsername, [FromBody, Required] string newTrainId)
+	public IActionResult EditTrain([FromBody] EditTrainBody body)
 	{
-		_logger.Log($"Editing train {id.ToString()} with new name as {newTrainName} and new auth name {newAuthUsername} and new train id {newTrainId}.");
+		_logger.Log($"Editing train {body.Id.ToString()} with new name as {body.TrainName} and new auth name {body.AuthentikUsername} and new train id {body.TrainId}.");
 		
-		if (_deviceDataAccess.EditTrain(id, newTrainName, newAuthUsername, newTrainId))
+		if (_deviceDataAccess.EditTrain(body.Id, body.TrainName, body.AuthentikUsername, body.TrainId))
 			return Ok();
 
 		return NotFound();
