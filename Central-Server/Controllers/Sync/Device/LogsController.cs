@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using AutoTf.Logging;
+using Central_Server.Data;
 using Central_Server.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using FileAccess = Central_Server.Data.FileAccess;
@@ -13,28 +14,35 @@ public class LogsController : AuthentikController
 {
     private readonly FileAccess _fileAccess;
     private readonly Logger _logger;
+    private readonly DeviceDataAccess _deviceDataAccess;
 
-    public LogsController(FileAccess fileAccess, Logger logger)
+    public LogsController(FileAccess fileAccess, Logger logger, DeviceDataAccess deviceDataAccess)
     {
         _fileAccess = fileAccess;
         _logger = logger;
+        _deviceDataAccess = deviceDataAccess;
     }
 
     [HttpGet("index")]
-    public IActionResult IndexLogs([FromQuery, Required] string deviceName)
+    public ActionResult<List<string>> IndexLogs([FromQuery, Required] string deviceName)
     {
         try
         {
             _logger.Log($"Logs index requested for {deviceName}.");
 
             string dir = Path.Combine("Logs", deviceName);
-			
-            if (!_fileAccess.DirectoryExists(dir))
+
+            bool dirExists = _fileAccess.DirectoryExists(dir);
+            
+            if (!dirExists && !_deviceDataAccess.TrainExists(deviceName))
                 return NotFound("Could not find device.");
+
+            if (!dirExists)
+                return new List<string>();
 
             string[] files = _fileAccess.GetFiles(dir);
 
-            return Content(JsonSerializer.Serialize(files.Select(Path.GetFileNameWithoutExtension)));
+            return files.Select(Path.GetFileNameWithoutExtension).ToList()!;
         }
         catch (Exception e)
         {
