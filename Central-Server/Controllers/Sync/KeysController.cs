@@ -69,7 +69,7 @@ public class KeysController : ControllerBase
 	}
 
 	[HttpPost("add")]
-	public IActionResult SyncKeys([FromQuery, Required] string serialNumber, [FromQuery, Required] string secret)
+	public IActionResult AddKey([FromBody, Required] string serialNumber, [FromBody, Required] string secret)
 	{
 		try
 		{
