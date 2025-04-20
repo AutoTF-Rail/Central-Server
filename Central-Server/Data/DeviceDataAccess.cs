@@ -22,6 +22,9 @@ public class DeviceDataAccess : IDisposable
 		_database = new LiteDatabase(_dataDir);
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 		collection.EnsureIndex(x => x.Username);
+		
+		ILiteCollection<TrainData> trainCollection = _database.GetCollection<TrainData>("TrainData");
+		trainCollection.EnsureIndex(x => x.UniqueId);
 	}
 	
 	public void UpdateStatus(string authentikUsername, string status)
@@ -49,6 +52,13 @@ public class DeviceDataAccess : IDisposable
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 
 		return collection.FindOne(x => x.Username == authentikUsername);
+	}
+	
+	public bool TrainExists(string authentikUsername)
+	{
+		ILiteCollection<TrainData> collection = _database.GetCollection<TrainData>("TrainData");
+
+		return collection.FindOne(x => x.AuthentikUsername == authentikUsername) != null;
 	}
 
 	public void CreateTrain(string trainName, string authentikUsername, string trainId)
