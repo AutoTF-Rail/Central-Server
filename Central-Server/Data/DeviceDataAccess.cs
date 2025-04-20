@@ -22,6 +22,9 @@ public class DeviceDataAccess : IDisposable
 		_database = new LiteDatabase(_dataDir);
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 		collection.EnsureIndex(x => x.Username);
+		
+		ILiteCollection<TrainData> trainCollection = _database.GetCollection<TrainData>("TrainData");
+		trainCollection.EnsureIndex(x => x.UniqueId);
 	}
 	
 	public void UpdateStatus(string authentikUsername, string status)
