@@ -1,3 +1,5 @@
+using LiteDB;
+
 namespace Central_Server.Models;
 
 public class TrainData
@@ -15,5 +17,7 @@ public class TrainData
 	public string AuthentikUsername { get; set; }
 	public string TrainId { get; set; }
 	public DateTime CreatedOn { get; set; }
+	
+	[BsonId]
 	public Guid UniqueId { get; set; }
 }
