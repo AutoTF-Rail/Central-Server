@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using Central_Server.Data;
+using Central_Server.Models.RequestBodies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Central_Server.Controllers.Sync;
@@ -69,11 +70,11 @@ public class KeysController : ControllerBase
 	}
 
 	[HttpPost("add")]
-	public IActionResult AddKey([FromBody, Required] string serialNumber, [FromBody, Required] string secret)
+	public IActionResult AddKey([FromBody] AddKeyBody body)
 	{
 		try
 		{
-			_keyDataAccess.CreateKey(serialNumber, secret);
+			_keyDataAccess.CreateKey(body.SerialNumber, body.Secret);
 			return Ok();
 		}
 		catch
