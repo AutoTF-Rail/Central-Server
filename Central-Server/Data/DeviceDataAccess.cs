@@ -53,6 +53,13 @@ public class DeviceDataAccess : IDisposable
 
 		return collection.FindOne(x => x.Username == authentikUsername);
 	}
+	
+	public bool TrainExists(string authentikUsername)
+	{
+		ILiteCollection<TrainData> collection = _database.GetCollection<TrainData>("TrainData");
+
+		return collection.FindOne(x => x.AuthentikUsername == authentikUsername) != null;
+	}
 
 	public void CreateTrain(string trainName, string authentikUsername, string trainId)
 	{
