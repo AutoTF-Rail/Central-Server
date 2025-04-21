@@ -37,7 +37,7 @@ public class DeviceController : AuthentikController
 		
 		// If there is no found status, the device may have just been never offline. That's why we check for it's existance above.
 		if (status == null)
-			return Content("");
+			return Content("Unknown");
 		
 		return Content(status.Timestamp.ToString("dd.MM.yyyy HH:mm:ss"));
 	}
