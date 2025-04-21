@@ -2,16 +2,14 @@ namespace Central_Server.Models;
 
 public class DeviceStatus
 {
-	public DeviceStatus(string username, DateTime timestamp, string status)
+	public DeviceStatus(Guid trainId, DateTime timestamp, string status)
 	{
-		Username = username;
+		TrainId = trainId;
 		Timestamp = timestamp;
 		Status = status;
 	}
 
-	// TODO: remove?
-	public int Id { get; set; }
-	public string Username { get; set; }
 	public DateTime Timestamp { get; set; }
 	public string Status { get; set; }
+	public Guid TrainId { get; set; }
 }

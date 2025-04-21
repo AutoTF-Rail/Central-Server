@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using AutoTf.Logging;
+using Central_Server.Data;
 using Central_Server.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using FileAccess = Central_Server.Data.FileAccess;
@@ -13,32 +14,39 @@ public class LogsController : AuthentikController
 {
     private readonly FileAccess _fileAccess;
     private readonly Logger _logger;
+    private readonly DeviceDataAccess _deviceDataAccess;
 
-    public LogsController(FileAccess fileAccess, Logger logger)
+    public LogsController(FileAccess fileAccess, Logger logger, DeviceDataAccess deviceDataAccess)
     {
         _fileAccess = fileAccess;
         _logger = logger;
+        _deviceDataAccess = deviceDataAccess;
     }
 
     [HttpGet("index")]
-    public IActionResult IndexLogs([FromQuery, Required] string deviceName)
+    public ActionResult<List<string>> IndexLogs([FromQuery, Required] string deviceName)
     {
         try
         {
-            _logger.Log($"Logs index requested for {deviceName}.");
-
-            string dir = Path.Combine("Logs", deviceName);
-			
-            if (!_fileAccess.DirectoryExists(dir))
+            if (!_deviceDataAccess.TrainExists(deviceName))
                 return NotFound("Could not find device.");
+            
+            Guid id = _deviceDataAccess.GetUniqueId(deviceName);
+
+            string dir = Path.Combine("Logs", id.ToString());
+
+            bool dirExists = _fileAccess.DirectoryExists(dir);
+            
+            if (!dirExists)
+                return new List<string>();
 
             string[] files = _fileAccess.GetFiles(dir);
 
-            return Content(JsonSerializer.Serialize(files.Select(Path.GetFileNameWithoutExtension)));
+            return files.Select(Path.GetFileNameWithoutExtension).ToList()!;
         }
         catch (Exception e)
         {
-            _logger.Log("Could not provide log index:");
+            _logger.Log($"Could not provide log index for {deviceName}:");
             _logger.Log(e.ToString());
         }
 
@@ -50,9 +58,12 @@ public class LogsController : AuthentikController
     {
         try
         {
-            _logger.Log($"Logs requested for {deviceName} at {date}.");
+            Guid id = _deviceDataAccess.GetUniqueId(deviceName);
 
-            string dir = Path.Combine("Logs", deviceName, date + ".txt");
+            if (id == Guid.Empty)
+                return NotFound("Could not find device.");
+
+            string dir = Path.Combine("Logs", id.ToString(), date + ".txt");
 			
             if (!_fileAccess.FileExists(dir))
                 return NotFound("Could not find log file.");
@@ -61,7 +72,7 @@ public class LogsController : AuthentikController
         }
         catch (Exception e)
         {
-            _logger.Log("Could not provide logs:");
+            _logger.Log($"Could not provide logs for {deviceName}:");
             _logger.Log(e.ToString());
         }
 
@@ -73,17 +84,16 @@ public class LogsController : AuthentikController
     {
         try
         {
-            _logger.Log($"{Username} requested to upload logs.");
+            Guid id = _deviceDataAccess.GetUniqueId(Username);
             
-            _fileAccess.AppendAllLines(Path.Combine("Logs", Username, DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
+            _fileAccess.AppendAllLines(Path.Combine("Logs", id.ToString(), DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
                 logs);
-			
-            _logger.Log($"Successfully uploaded logs for {Username}.");
+            
             return Ok();
         }
         catch (Exception e)
         {
-            _logger.Log("ERROR: Could not upload logs:");
+            _logger.Log($"Could not upload logs for {Username}:");
             _logger.Log(e.ToString());
         }
 

@@ -14,32 +14,38 @@ public class VideoController : AuthentikController
 {
     private readonly FileAccess _fileAccess;
     private readonly Logger _logger;
-
-    public VideoController(FileAccess fileAccess, Logger logger)
+    private readonly DeviceDataAccess _deviceDataAccess;
+    public VideoController(FileAccess fileAccess, Logger logger, DeviceDataAccess deviceDataAccess)
     {
         _fileAccess = fileAccess;
         _logger = logger;
+        _deviceDataAccess = deviceDataAccess;
     }
 	
     [HttpGet("index")]
-    public IActionResult IndexVideos([FromQuery, Required] string deviceName)
+    public ActionResult<List<string>> IndexVideos([FromQuery, Required] string deviceName)
     {
         try
         {
-            _logger.Log($"Video index requested for {deviceName}.");
-
-            string dir = Path.Combine("Videos", deviceName);
-			
-            if (!_fileAccess.DirectoryExists(dir))
+            if (!_deviceDataAccess.TrainExists(deviceName))
                 return NotFound("Could not find device.");
+            
+            Guid id = _deviceDataAccess.GetUniqueId(deviceName);
+
+            string dir = Path.Combine("Videos", id.ToString());
+            
+            bool dirExists = _fileAccess.DirectoryExists(dir);
+
+            if (!dirExists)
+                return new List<string>();
 
             string[] files = _fileAccess.GetFiles(dir);
 
-            return Content(JsonSerializer.Serialize(files.Select(Path.GetFileNameWithoutExtension)));
+            return files.Select(Path.GetFileNameWithoutExtension).ToList()!;
         }
         catch (Exception e)
         {
-            _logger.Log("Could not provide video index:");
+            _logger.Log($"Could not provide video index for {deviceName}:");
             _logger.Log(e.ToString());
         }
 
@@ -51,39 +57,42 @@ public class VideoController : AuthentikController
     {
         try
         {
-            _logger.Log($"Video requested for {deviceName} at {date}.");
+            Guid id = _deviceDataAccess.GetUniqueId(deviceName);
 
-            string dir = Path.Combine("Videos", deviceName, date + ".mp4");
+            if (id == Guid.Empty)
+                return NotFound("Could not find device.");
+
+            string dir = Path.Combine("Videos", id.ToString(), date + ".mp4");
 			
             if (!_fileAccess.FileExists(dir))
                 return NotFound("Could not find video file.");
 
-            return File(_fileAccess.ReadAllBytes(dir), "video/mp4", date + ".mp4");
+            return File(_fileAccess.ReadAllBytes(dir), "video/mp4", $"{deviceName}-{date}.mp4");
         }
         catch (Exception e)
         {
-            _logger.Log("Could not provide video:");
+            _logger.Log($"Could not provide video for {deviceName}:");
             _logger.Log(e.ToString());
         }
 
         return BadRequest("Could not supply video.");
     }
-	
+    
+    // TODO: Maybe change the username to the UniqueID, so that the username can be safely changed without losing access to other footage?
     [HttpPost("upload")]
     public IActionResult UploadVideo([FromForm, Required] IFormFile file)
     {
         try
         {
-            _logger.Log($"{Username} requested to upload video \"{file.FileName}\".");
-			
-            _fileAccess.SaveVideo(Path.Combine("Videos", Username, file.FileName), file);
-			
-            _logger.Log($"Successfully uploaded video \"{file.FileName}\".");
+            Guid id = _deviceDataAccess.GetUniqueId(Username);
+            
+            _fileAccess.SaveVideo(Path.Combine("Videos", id.ToString(), file.FileName), file);
+            
             return Ok();
         }
         catch (Exception e)
         {
-            _logger.Log("ERROR: Could not upload video:");
+            _logger.Log($"Could not upload video for {Username}:");
             _logger.Log(e.ToString());
         }
 

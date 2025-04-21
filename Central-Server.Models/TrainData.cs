@@ -25,4 +25,6 @@ public class TrainData
 	public DateTime CreatedOn { get; set; }
 	
 	public Guid UniqueId { get; set; }
+
+	public ObjectId Id { get; set; } = null!;
 }

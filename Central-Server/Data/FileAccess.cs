@@ -1,4 +1,4 @@
-using Microsoft.VisualBasic.FileIO;
+using AutoTf.Logging;
 
 namespace Central_Server.Data;
 
@@ -8,7 +8,6 @@ public class FileAccess
 
 	private readonly string _evuName;
 	
-	// TODO: Convert to hosted service?
 	public FileAccess()
 	{
 #if RELEASE
@@ -17,9 +16,8 @@ public class FileAccess
 		_dataDir = Path.Combine(SpecialDirectories.MyDocuments, "AutoTf/CentralServer");
 		Directory.CreateDirectory(_dataDir);
 #endif
+		// UnknownEVU should pretty much just never happen, unless someone fucked up and misconfigured the container.
 		_evuName = Environment.GetEnvironmentVariable("evuName") ?? "UnknownEVU";
-		
-		// TODO: Don't startup here if the evu name is unknown?
 	}
 
 	public string GetEvuName()
