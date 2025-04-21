@@ -56,7 +56,7 @@ public class DeviceController : AuthentikController
 		if (status == null)
 			return Content("Unknown");
 		
-		if (DateTime.Now - status.Timestamp > TimeSpan.FromMinutes(5))
+		if (DateTime.Now - status.Timestamp > TimeSpan.FromMinutes(3))
 			return Content("Offline");
 
 		return Content(status.Status);
