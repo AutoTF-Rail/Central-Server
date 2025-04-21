@@ -31,7 +31,7 @@ public class LogsController : AuthentikController
             if (!_deviceDataAccess.TrainExists(deviceName))
                 return NotFound("Could not find device.");
             
-            Guid id = _deviceDataAccess.GetUniqueId(Username);
+            Guid id = _deviceDataAccess.GetUniqueId(deviceName);
             _logger.Log($"[{id.ToString()}] Logs index requested.");
 
             string dir = Path.Combine("Logs", deviceName);

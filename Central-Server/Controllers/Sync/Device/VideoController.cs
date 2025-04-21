@@ -30,7 +30,7 @@ public class VideoController : AuthentikController
             if (!_deviceDataAccess.TrainExists(deviceName))
                 return NotFound("Could not find device.");
             
-            Guid id = _deviceDataAccess.GetUniqueId(Username);
+            Guid id = _deviceDataAccess.GetUniqueId(deviceName);
             _logger.Log($"[{id.ToString()}] Video index requested.");
 
             string dir = Path.Combine("Videos", id.ToString());
@@ -58,7 +58,7 @@ public class VideoController : AuthentikController
     {
         try
         {
-            Guid id = _deviceDataAccess.GetUniqueId(Username);
+            Guid id = _deviceDataAccess.GetUniqueId(deviceName);
 
             if (id == Guid.Empty)
                 return NotFound("Could not find device.");
