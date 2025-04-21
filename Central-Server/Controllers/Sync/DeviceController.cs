@@ -25,7 +25,6 @@ public class DeviceController : AuthentikController
 		_logger = logger;
 	}
 	
-	// TODO: Rename endpoint?
 	[HttpGet("lastsynced")]
 	public IActionResult LastSynced([FromQuery, Required] string deviceName)
 	{
@@ -61,16 +60,6 @@ public class DeviceController : AuthentikController
 			return Content("Offline");
 
 		return Content(status.Status);
-	}
-
-	// TODO: Remove?
-	[HttpGet("devices")]
-	public IActionResult Devices()
-	{
-		// TODO: Implement BETTER Device index. (db or via authentik?) 
-		// TODO: TryCatch
-		string[] directories = _fileAccess.GetDirectories("Logs");
-		return Content(JsonSerializer.Serialize(directories));
 	}
 	
 	[HttpGet("getAllTrains")]
