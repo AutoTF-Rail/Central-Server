@@ -27,14 +27,15 @@ public class VideoController : AuthentikController
     {
         try
         {
-            _logger.Log($"Video index requested for {deviceName}.");
+            if (!_deviceDataAccess.TrainExists(deviceName))
+                return NotFound("Could not find device.");
+            
+            Guid id = _deviceDataAccess.GetUniqueId(Username);
+            _logger.Log($"[{id.ToString()}] Video index requested.");
 
-            string dir = Path.Combine("Videos", deviceName);
+            string dir = Path.Combine("Videos", id.ToString());
             
             bool dirExists = _fileAccess.DirectoryExists(dir);
-            
-            if (!dirExists && !_deviceDataAccess.TrainExists(deviceName))
-                return NotFound("Could not find device.");
 
             if (!dirExists)
                 return new List<string>();
@@ -57,14 +58,19 @@ public class VideoController : AuthentikController
     {
         try
         {
-            _logger.Log($"Video requested for {deviceName} at {date}.");
+            Guid id = _deviceDataAccess.GetUniqueId(Username);
 
-            string dir = Path.Combine("Videos", deviceName, date + ".mp4");
+            if (id == Guid.Empty)
+                return NotFound("Could not find device.");
+                
+            _logger.Log($"Video requested for {id.ToString()} at {date}.");
+
+            string dir = Path.Combine("Videos", id.ToString(), date + ".mp4");
 			
             if (!_fileAccess.FileExists(dir))
                 return NotFound("Could not find video file.");
 
-            return File(_fileAccess.ReadAllBytes(dir), "video/mp4", date + ".mp4");
+            return File(_fileAccess.ReadAllBytes(dir), "video/mp4", $"{deviceName}-{date}.mp4");
         }
         catch (Exception e)
         {
@@ -74,15 +80,18 @@ public class VideoController : AuthentikController
 
         return BadRequest("Could not supply video.");
     }
-	
+    
+    // TODO: Maybe change the username to the UniqueID, so that the username can be safely changed without losing access to other footage?
     [HttpPost("upload")]
     public IActionResult UploadVideo([FromForm, Required] IFormFile file)
     {
         try
         {
-            _logger.Log($"{Username} requested to upload video \"{file.FileName}\".");
-			
-            _fileAccess.SaveVideo(Path.Combine("Videos", Username, file.FileName), file);
+            Guid id = _deviceDataAccess.GetUniqueId(Username);
+            
+            _logger.Log($"{id.ToString()} requested to upload video \"{file.FileName}\".");
+            
+            _fileAccess.SaveVideo(Path.Combine("Videos", id.ToString(), file.FileName), file);
 			
             _logger.Log($"Successfully uploaded video \"{file.FileName}\".");
             return Ok();

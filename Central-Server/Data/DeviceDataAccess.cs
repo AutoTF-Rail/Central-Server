@@ -21,17 +21,17 @@ public class DeviceDataAccess : IDisposable
 #endif
 		_database = new LiteDatabase(_dataDir);
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
-		collection.EnsureIndex(x => x.Username);
+		collection.EnsureIndex(x => x.TrainId);
 		
 		ILiteCollection<TrainData> trainCollection = _database.GetCollection<TrainData>("TrainData");
 		trainCollection.EnsureIndex(x => x.UniqueId);
 	}
 	
-	public void UpdateStatus(string authentikUsername, string status)
+	public void UpdateStatus(Guid trainId, string status)
 	{
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 
-		DeviceStatus? existingLog = collection.FindOne(x => x.Username == authentikUsername);
+		DeviceStatus? existingLog = collection.FindOne(x => x.TrainId == trainId);
 		
 		if (existingLog != null)
 		{
@@ -41,17 +41,17 @@ public class DeviceDataAccess : IDisposable
 		}
 		else
 		{
-			DeviceStatus newLog = new DeviceStatus(authentikUsername, DateTime.UtcNow, status);
+			DeviceStatus newLog = new DeviceStatus(trainId, DateTime.UtcNow, status);
 			collection.Insert(newLog);
 		}
 		_database.Checkpoint();
 	}
 	
-	public DeviceStatus? GetStatusByName(string authentikUsername)
+	public DeviceStatus? GetStatus(Guid uniqueId)
 	{
 		ILiteCollection<DeviceStatus> collection = _database.GetCollection<DeviceStatus>("deviceStatus");
 
-		return collection.FindOne(x => x.Username == authentikUsername);
+		return collection.FindOne(x => x.TrainId == uniqueId);
 	}
 	
 	public bool TrainExists(string authentikUsername)
@@ -88,6 +88,18 @@ public class DeviceDataAccess : IDisposable
 		_database.Checkpoint();
 
 		return true;
+	}
+
+	/// <summary>
+	/// Gets the unique ID of a train by its authentik username.
+	/// You usually don't need to check if this return value is Guid.Empty, because most requests won't be reachable if there is no auth username present.
+	/// </summary>
+	public Guid GetUniqueId(string authUsername)
+	{
+		ILiteCollection<TrainData> collection = _database.GetCollection<TrainData>("TrainData");
+		TrainData? train = collection.FindOne(x => x.AuthentikUsername == authUsername);
+		
+		return train?.UniqueId ?? Guid.Empty;
 	}
 
 	public void DeleteTrain(Guid id)

@@ -29,12 +29,18 @@ public class DeviceController : AuthentikController
 	[HttpGet("lastsynced")]
 	public IActionResult LastSynced([FromQuery, Required] string deviceName)
 	{
-		_logger.Log($"Getting last synced date for {deviceName}.");
+		Guid id = _deviceDataAccess.GetUniqueId(deviceName);
+
+		if (id == Guid.Empty)
+			return NotFound("Could not find device.");
 		
-		DeviceStatus? status = _deviceDataAccess.GetStatusByName(deviceName);
+		_logger.Log($"Getting last synced date for {id.ToString()}.");
 		
+		DeviceStatus? status = _deviceDataAccess.GetStatus(id);
+		
+		// If there is no found status, the device may have just been never offline. That's why we check for it's existance above.
 		if (status == null)
-			return BadRequest("Device not found.");
+			return Content("");
 		
 		return Content(status.Timestamp.ToString("dd.MM.yyyy HH:mm:ss"));
 	}
@@ -42,14 +48,16 @@ public class DeviceController : AuthentikController
 	[HttpGet("status")]
 	public IActionResult Status([FromQuery, Required] string deviceName)
 	{
-		_logger.Log($"Getting status for {deviceName}.");
-		
-		DeviceStatus? status = _deviceDataAccess.GetStatusByName(deviceName);
-		
-		if (status == null && !_deviceDataAccess.TrainExists(deviceName))
-			return BadRequest("Device not found.");
+		Guid id = _deviceDataAccess.GetUniqueId(deviceName);
 
-		// Train exists, but never started up/didn't async yet.
+		if (id == Guid.Empty)
+			return NotFound("Could not find device.");
+		
+		_logger.Log($"Getting status for {id.ToString()}.");
+		
+		DeviceStatus? status = _deviceDataAccess.GetStatus(id);
+
+		// Train exists, but never started up/didn't sync yet.
 		if (status == null)
 			return Content("Unknown");
 		
@@ -99,7 +107,8 @@ public class DeviceController : AuthentikController
 	public IActionResult DeleteTrain([FromBody, Required] Guid id)
 	{
 		_logger.Log($"Removing train with id {id.ToString()}.");
-		_deviceDataAccess.DeleteTrain(id);
+		_deviceDataAccess.DeleteTrain(id); 
+		
 		return Ok();
 	}
 
@@ -107,9 +116,11 @@ public class DeviceController : AuthentikController
 	[HttpPost("updatestatus")]
 	public IActionResult UpdateStatus([FromBody] string deviceStatus)
 	{
-		_logger.Log($"Updating status for {Username} as {deviceStatus}.");
+		Guid id = _deviceDataAccess.GetUniqueId(Username);
 		
-		_deviceDataAccess.UpdateStatus(Username, deviceStatus);
+		_logger.Log($"Updating status for {id.ToString()} as {deviceStatus}.");
+		
+		_deviceDataAccess.UpdateStatus(id, deviceStatus);
 		return Ok();
 	}
 }

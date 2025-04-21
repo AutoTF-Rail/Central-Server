@@ -28,15 +28,16 @@ public class LogsController : AuthentikController
     {
         try
         {
-            _logger.Log($"Logs index requested for {deviceName}.");
+            if (!_deviceDataAccess.TrainExists(deviceName))
+                return NotFound("Could not find device.");
+            
+            Guid id = _deviceDataAccess.GetUniqueId(Username);
+            _logger.Log($"[{id.ToString()}] Logs index requested.");
 
             string dir = Path.Combine("Logs", deviceName);
 
             bool dirExists = _fileAccess.DirectoryExists(dir);
             
-            if (!dirExists && !_deviceDataAccess.TrainExists(deviceName))
-                return NotFound("Could not find device.");
-
             if (!dirExists)
                 return new List<string>();
 
@@ -58,9 +59,14 @@ public class LogsController : AuthentikController
     {
         try
         {
-            _logger.Log($"Logs requested for {deviceName} at {date}.");
+            Guid id = _deviceDataAccess.GetUniqueId(deviceName);
 
-            string dir = Path.Combine("Logs", deviceName, date + ".txt");
+            if (id == Guid.Empty)
+                return NotFound("Could not find device.");
+            
+            _logger.Log($"Logs requested for {id.ToString()} at {date}.");
+
+            string dir = Path.Combine("Logs", id.ToString(), date + ".txt");
 			
             if (!_fileAccess.FileExists(dir))
                 return NotFound("Could not find log file.");
@@ -81,12 +87,14 @@ public class LogsController : AuthentikController
     {
         try
         {
-            _logger.Log($"{Username} requested to upload logs.");
+            Guid id = _deviceDataAccess.GetUniqueId(Username);
             
-            _fileAccess.AppendAllLines(Path.Combine("Logs", Username, DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
+            _logger.Log($"{id.ToString()} requested to upload logs.");
+            
+            _fileAccess.AppendAllLines(Path.Combine("Logs", id.ToString(), DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
                 logs);
 			
-            _logger.Log($"Successfully uploaded logs for {Username}.");
+            _logger.Log($"Successfully uploaded logs for {id.ToString()}.");
             return Ok();
         }
         catch (Exception e)
