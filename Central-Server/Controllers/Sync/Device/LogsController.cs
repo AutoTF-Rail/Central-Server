@@ -32,7 +32,6 @@ public class LogsController : AuthentikController
                 return NotFound("Could not find device.");
             
             Guid id = _deviceDataAccess.GetUniqueId(deviceName);
-            _logger.Log($"[{id.ToString()}] Logs index requested.");
 
             string dir = Path.Combine("Logs", id.ToString());
 
@@ -47,7 +46,7 @@ public class LogsController : AuthentikController
         }
         catch (Exception e)
         {
-            _logger.Log("Could not provide log index:");
+            _logger.Log($"Could not provide log index for {deviceName}:");
             _logger.Log(e.ToString());
         }
 
@@ -63,8 +62,6 @@ public class LogsController : AuthentikController
 
             if (id == Guid.Empty)
                 return NotFound("Could not find device.");
-            
-            _logger.Log($"Logs requested for {id.ToString()} at {date}.");
 
             string dir = Path.Combine("Logs", id.ToString(), date + ".txt");
 			
@@ -75,7 +72,7 @@ public class LogsController : AuthentikController
         }
         catch (Exception e)
         {
-            _logger.Log("Could not provide logs:");
+            _logger.Log($"Could not provide logs for {deviceName}:");
             _logger.Log(e.ToString());
         }
 
@@ -89,17 +86,14 @@ public class LogsController : AuthentikController
         {
             Guid id = _deviceDataAccess.GetUniqueId(Username);
             
-            _logger.Log($"{id.ToString()} requested to upload logs.");
-            
             _fileAccess.AppendAllLines(Path.Combine("Logs", id.ToString(), DateTime.Now.ToString("yyyy-MM-dd") + ".txt"),
                 logs);
-			
-            _logger.Log($"Successfully uploaded logs for {id.ToString()}.");
+            
             return Ok();
         }
         catch (Exception e)
         {
-            _logger.Log("ERROR: Could not upload logs:");
+            _logger.Log($"Could not upload logs for {Username}:");
             _logger.Log(e.ToString());
         }
 

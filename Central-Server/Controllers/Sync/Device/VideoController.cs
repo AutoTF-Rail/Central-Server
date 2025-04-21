@@ -31,7 +31,6 @@ public class VideoController : AuthentikController
                 return NotFound("Could not find device.");
             
             Guid id = _deviceDataAccess.GetUniqueId(deviceName);
-            _logger.Log($"[{id.ToString()}] Video index requested.");
 
             string dir = Path.Combine("Videos", id.ToString());
             
@@ -46,7 +45,7 @@ public class VideoController : AuthentikController
         }
         catch (Exception e)
         {
-            _logger.Log("Could not provide video index:");
+            _logger.Log($"Could not provide video index for {deviceName}:");
             _logger.Log(e.ToString());
         }
 
@@ -62,8 +61,6 @@ public class VideoController : AuthentikController
 
             if (id == Guid.Empty)
                 return NotFound("Could not find device.");
-                
-            _logger.Log($"Video requested for {id.ToString()} at {date}.");
 
             string dir = Path.Combine("Videos", id.ToString(), date + ".mp4");
 			
@@ -74,7 +71,7 @@ public class VideoController : AuthentikController
         }
         catch (Exception e)
         {
-            _logger.Log("Could not provide video:");
+            _logger.Log($"Could not provide video for {deviceName}:");
             _logger.Log(e.ToString());
         }
 
@@ -89,16 +86,13 @@ public class VideoController : AuthentikController
         {
             Guid id = _deviceDataAccess.GetUniqueId(Username);
             
-            _logger.Log($"{id.ToString()} requested to upload video \"{file.FileName}\".");
-            
             _fileAccess.SaveVideo(Path.Combine("Videos", id.ToString(), file.FileName), file);
-			
-            _logger.Log($"Successfully uploaded video \"{file.FileName}\".");
+            
             return Ok();
         }
         catch (Exception e)
         {
-            _logger.Log("ERROR: Could not upload video:");
+            _logger.Log($"Could not upload video for {Username}:");
             _logger.Log(e.ToString());
         }
 

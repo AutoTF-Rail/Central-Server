@@ -34,8 +34,6 @@ public class DeviceController : AuthentikController
 		if (id == Guid.Empty)
 			return NotFound("Could not find device.");
 		
-		_logger.Log($"Getting last synced date for {id.ToString()}.");
-		
 		DeviceStatus? status = _deviceDataAccess.GetStatus(id);
 		
 		// If there is no found status, the device may have just been never offline. That's why we check for it's existance above.
@@ -52,8 +50,6 @@ public class DeviceController : AuthentikController
 
 		if (id == Guid.Empty)
 			return NotFound("Could not find device.");
-		
-		_logger.Log($"Getting status for {id.ToString()}.");
 		
 		DeviceStatus? status = _deviceDataAccess.GetStatus(id);
 
@@ -117,8 +113,6 @@ public class DeviceController : AuthentikController
 	public IActionResult UpdateStatus([FromBody] string deviceStatus)
 	{
 		Guid id = _deviceDataAccess.GetUniqueId(Username);
-		
-		_logger.Log($"Updating status for {id.ToString()} as {deviceStatus}.");
 		
 		_deviceDataAccess.UpdateStatus(id, deviceStatus);
 		return Ok();
