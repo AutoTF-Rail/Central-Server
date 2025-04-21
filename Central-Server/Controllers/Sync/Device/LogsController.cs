@@ -34,7 +34,7 @@ public class LogsController : AuthentikController
             Guid id = _deviceDataAccess.GetUniqueId(deviceName);
             _logger.Log($"[{id.ToString()}] Logs index requested.");
 
-            string dir = Path.Combine("Logs", deviceName);
+            string dir = Path.Combine("Logs", id.ToString());
 
             bool dirExists = _fileAccess.DirectoryExists(dir);
             
