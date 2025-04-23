@@ -29,8 +29,16 @@ public class MacAddrsController : ControllerBase
 	[HttpGet("all")]
 	public IActionResult SyncMacAddresses()
 	{
-		// If last changed value is never than what the client has, we send all back
-		return Content(JsonSerializer.Serialize(_macAddrAccess.GetAll()));
+		try
+		{
+			return Content(JsonSerializer.Serialize(_macAddrAccess.GetAll()));
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine("An error occured while getting all addresses:");
+			Console.WriteLine(ex.ToString());
+			return BadRequest("An error occured while getting all addresses.");
+		}
 	}
 
 	[HttpPost("add")]
