@@ -15,6 +15,7 @@ public class VideoController : AuthentikController
     private readonly FileAccess _fileAccess;
     private readonly Logger _logger;
     private readonly DeviceDataAccess _deviceDataAccess;
+    
     public VideoController(FileAccess fileAccess, Logger logger, DeviceDataAccess deviceDataAccess)
     {
         _fileAccess = fileAccess;
@@ -78,7 +79,6 @@ public class VideoController : AuthentikController
         return BadRequest("Could not supply video.");
     }
     
-    // TODO: Maybe change the username to the UniqueID, so that the username can be safely changed without losing access to other footage?
     [HttpPost("upload")]
     public IActionResult UploadVideo([FromForm, Required] IFormFile file)
     {

@@ -25,7 +25,6 @@ public class DeviceController : AuthentikController
 		_logger = logger;
 	}
 	
-	// TODO: Rename endpoint?
 	[HttpGet("lastsynced")]
 	public IActionResult LastSynced([FromQuery, Required] string deviceName)
 	{
@@ -38,7 +37,7 @@ public class DeviceController : AuthentikController
 		
 		// If there is no found status, the device may have just been never offline. That's why we check for it's existance above.
 		if (status == null)
-			return Content("");
+			return Content("Unknown");
 		
 		return Content(status.Timestamp.ToString("dd.MM.yyyy HH:mm:ss"));
 	}
@@ -57,20 +56,10 @@ public class DeviceController : AuthentikController
 		if (status == null)
 			return Content("Unknown");
 		
-		if (DateTime.Now - status.Timestamp > TimeSpan.FromMinutes(5))
+		if (DateTime.Now - status.Timestamp > TimeSpan.FromMinutes(3))
 			return Content("Offline");
 
 		return Content(status.Status);
-	}
-
-	// TODO: Remove?
-	[HttpGet("devices")]
-	public IActionResult Devices()
-	{
-		// TODO: Implement BETTER Device index. (db or via authentik?) 
-		// TODO: TryCatch
-		string[] directories = _fileAccess.GetDirectories("Logs");
-		return Content(JsonSerializer.Serialize(directories));
 	}
 	
 	[HttpGet("getAllTrains")]

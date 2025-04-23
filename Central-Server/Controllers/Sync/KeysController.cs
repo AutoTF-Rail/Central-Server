@@ -63,9 +63,11 @@ public class KeysController : ControllerBase
 		{
 			return Content(JsonSerializer.Serialize(_keyDataAccess.GetAll()));
 		}
-		catch
+		catch (Exception ex)
 		{
-			return BadRequest();
+			Console.WriteLine("An error occured while getting all keys:");
+			Console.WriteLine(ex.ToString());
+			return BadRequest("An error occured while getting all keys.");
 		}
 	}
 
