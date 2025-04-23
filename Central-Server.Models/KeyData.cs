@@ -11,5 +11,5 @@ public class KeyData
 	public required string Secret { get; set; }
 	public required DateTime CreatedOn { get; set; }
 
-	public int Id { get; set; }
+	public ObjectId Id { get; set; } = null!;
 }
