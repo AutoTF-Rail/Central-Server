@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Sockets;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -40,10 +41,19 @@ public class AuthentikController : ControllerBase, IActionFilter
 			
 			if (ip is not null)
 			{
-				string ipv4 = ip.MapToIPv4().ToString();
+				byte[] bytes = ip.GetAddressBytes();
+    
+				if (ip.AddressFamily == AddressFamily.InterNetwork)
+				{
+					return bytes[0] == 10 ||
+					       (bytes[0] == 172 && bytes[1] >= 16 && bytes[1] <= 31) ||
+					       (bytes[0] == 192 && bytes[1] == 168);
+				}
 
-				if (ipv4 == "192.168.1.1")
+				if (IPAddress.IsLoopback(ip))
 					return true;
+
+				return false;
 			}
 			
 			deviceName = headers["X-Authentik-Username"].ToString();
