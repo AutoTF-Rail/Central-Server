@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -35,13 +36,15 @@ public class AuthentikController : ControllerBase, IActionFilter
 			// ReSharper disable once HeuristicUnreachableCode
 #pragma warning disable CS0162 // Unreachable code detected
 			
-			string? remoteIp = context.Connection.RemoteIpAddress?.ToString();
+			IPAddress? ip = context.Connection.RemoteIpAddress;
 			
-			if (remoteIp == null)
-				return false;
-			
-			if (remoteIp == "127.0.0.1" || remoteIp == "::1" || remoteIp.StartsWith("172.17.0.1"))
-				return true;
+			if (ip is not null)
+			{
+				string ipv4 = ip.MapToIPv4().ToString();
+
+				if (ipv4 == "192.168.1.1")
+					return true;
+			}
 			
 			deviceName = headers["X-Authentik-Username"].ToString();
                 
