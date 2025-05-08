@@ -54,7 +54,7 @@ public class LogsController : AuthentikController
     }
 	
     [HttpGet("download")]
-    public IActionResult GetLogs([FromQuery, Required] string deviceName, [FromQuery, Required] string date)
+    public ActionResult<string[]> GetLogs([FromQuery, Required] string deviceName, [FromQuery, Required] string date)
     {
         try
         {
@@ -68,7 +68,7 @@ public class LogsController : AuthentikController
             if (!_fileAccess.FileExists(dir))
                 return NotFound("Could not find log file.");
 
-            return Content(JsonSerializer.Serialize(_fileAccess.ReadAllLines(dir)));
+            return _fileAccess.ReadAllLines(dir);
         }
         catch (Exception e)
         {

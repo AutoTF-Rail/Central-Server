@@ -6,6 +6,13 @@ namespace Central_Server.Controllers;
 [Route("/")]
 public class RootController : ControllerBase
 {
+	private readonly FileAccess _fileAccess;
+
+	public RootController(FileAccess fileAccess)
+	{
+		_fileAccess = fileAccess;
+	}
+	
 	/// <summary>
 	/// Test endpoint
 	/// </summary>
@@ -13,6 +20,12 @@ public class RootController : ControllerBase
 	public IActionResult Index()
 	{
 		return Content("Bluba");
+	}
+	
+	[HttpGet("evuName")]
+	public ActionResult<string> EvuName()
+	{
+		return _fileAccess.GetEvuName();
 	}
 	
 	[HttpGet("/token")]

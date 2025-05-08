@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Sockets;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -12,7 +14,7 @@ public class AuthentikController : ControllerBase, IActionFilter
 	{
 		IHeaderDictionary? headers = context.HttpContext.Request.Headers;
 
-		if (!IsAllowedDevice(headers, out string? deviceName))
+		if (!IsAllowedDevice(context.HttpContext, headers, out string? deviceName))
 		{
 			context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
 			context.Result = new UnauthorizedResult();
@@ -23,9 +25,9 @@ public class AuthentikController : ControllerBase, IActionFilter
 
 	public void OnActionExecuted(ActionExecutedContext context) { }
 	
-	private static bool IsAllowedDevice(IHeaderDictionary headers, out string? deviceName)
+	private static bool IsAllowedDevice(HttpContext context, IHeaderDictionary headers, out string? deviceName)
 	{
-		deviceName = "debugPlaceholder";
+		deviceName = "system";
             
 		try
 		{
@@ -34,6 +36,27 @@ public class AuthentikController : ControllerBase, IActionFilter
 #endif
 			// ReSharper disable once HeuristicUnreachableCode
 #pragma warning disable CS0162 // Unreachable code detected
+			
+			IPAddress? ip = context.Connection.RemoteIpAddress;
+			
+			if (ip is not null)
+			{
+				ip = ip.MapToIPv4();
+				byte[] bytes = ip.GetAddressBytes();
+    
+				if (ip.AddressFamily == AddressFamily.InterNetwork)
+				{
+					return bytes[0] == 10 ||
+					       (bytes[0] == 172 && bytes[1] >= 16 && bytes[1] <= 31) ||
+					       (bytes[0] == 192 && bytes[1] == 168);
+				}
+
+				if (IPAddress.IsLoopback(ip))
+					return true;
+
+				return false;
+			}
+			
 			deviceName = headers["X-Authentik-Username"].ToString();
                 
 			// We don't need to further validate this, because all incoming traffic is being routed through authentik anyways, so this is secure enough.

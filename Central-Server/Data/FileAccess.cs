@@ -7,6 +7,7 @@ public class FileAccess
 	private readonly string _dataDir;
 
 	private readonly string _evuName;
+	private readonly string _containerName;
 	
 	public FileAccess()
 	{
@@ -14,10 +15,12 @@ public class FileAccess
 		_dataDir = "/Data";
 #else
 		_dataDir = Path.Combine(SpecialDirectories.MyDocuments, "AutoTf/CentralServer");
-		Directory.CreateDirectory(_dataDir);
 #endif
 		// UnknownEVU should pretty much just never happen, unless someone fucked up and misconfigured the container.
 		_evuName = Environment.GetEnvironmentVariable("evuName") ?? "UnknownEVU";
+		_containerName = Environment.GetEnvironmentVariable("containerName") ?? "UnknownEVU";
+		
+		Directory.CreateDirectory(_dataDir);
 	}
 
 	public string GetEvuName()

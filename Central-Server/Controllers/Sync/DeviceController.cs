@@ -15,35 +15,33 @@ namespace Central_Server.Controllers.Sync;
 public class DeviceController : AuthentikController
 {
 	private readonly DeviceDataAccess _deviceDataAccess;
-	private readonly FileAccess _fileAccess;
 	private readonly Logger _logger;
 
-	public DeviceController(DeviceDataAccess deviceDataAccess, FileAccess fileAccess, Logger logger)
+	public DeviceController(DeviceDataAccess deviceDataAccess, Logger logger)
 	{
 		_deviceDataAccess = deviceDataAccess;
-		_fileAccess = fileAccess;
 		_logger = logger;
 	}
 	
 	[HttpGet("lastsynced")]
-	public IActionResult LastSynced([FromQuery, Required] string deviceName)
+	public ActionResult<DateTime>? LastSynced([FromQuery, Required] string deviceName)
 	{
 		Guid id = _deviceDataAccess.GetUniqueId(deviceName);
 
 		if (id == Guid.Empty)
-			return NotFound("Could not find device.");
+			return null;
 		
 		DeviceStatus? status = _deviceDataAccess.GetStatus(id);
 		
 		// If there is no found status, the device may have just been never offline. That's why we check for it's existance above.
 		if (status == null)
-			return Content("Unknown");
+			return null;
 		
-		return Content(status.Timestamp.ToString("dd.MM.yyyy HH:mm:ss"));
+		return status.Timestamp;
 	}
 	
 	[HttpGet("status")]
-	public IActionResult Status([FromQuery, Required] string deviceName)
+	public ActionResult<string> Status([FromQuery, Required] string deviceName)
 	{
 		Guid id = _deviceDataAccess.GetUniqueId(deviceName);
 
@@ -54,18 +52,24 @@ public class DeviceController : AuthentikController
 
 		// Train exists, but never started up/didn't sync yet.
 		if (status == null)
-			return Content("Unknown");
+			return Problem("Unknown");
 		
 		if (DateTime.Now - status.Timestamp > TimeSpan.FromMinutes(3))
-			return Content("Offline");
+			return "Offline";
 
-		return Content(status.Status);
+		return status.Status;
 	}
 	
 	[HttpGet("getAllTrains")]
-	public IActionResult GetAllTrains()
+	public ActionResult<List<TrainData>> GetAllTrains()
 	{
-		return Content(JsonSerializer.Serialize(_deviceDataAccess.GetAllTrains()));
+		return _deviceDataAccess.GetAllTrains();
+	}
+	
+	[HttpGet("trainCount")]
+	public ActionResult<int> TrainCount()
+	{
+		return _deviceDataAccess.GetAllTrains().Count;
 	}
 	
 	[HttpPost("addTrain")]

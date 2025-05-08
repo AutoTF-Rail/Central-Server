@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using Central_Server.Data;
+using Central_Server.Models;
 using Central_Server.Models.RequestBodies;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,11 +45,11 @@ public class KeysController : ControllerBase
 	}
 
 	[HttpGet("new")]
-	public IActionResult SyncKeys([FromQuery, Required] string lastSynced)
+	public ActionResult<List<KeyData>> SyncKeys([FromQuery, Required] string lastSynced)
 	{
 		try
 		{
-			return Content(JsonSerializer.Serialize(_keyDataAccess.GetNew(DateTime.Parse(lastSynced))));
+			return _keyDataAccess.GetNew(DateTime.Parse(lastSynced));
 		}
 		catch
 		{
@@ -57,11 +58,11 @@ public class KeysController : ControllerBase
 	}
 
 	[HttpGet("all")]
-	public IActionResult SyncAllKeys()
+	public ActionResult<List<KeyData>> SyncAllKeys()
 	{
 		try
 		{
-			return Content(JsonSerializer.Serialize(_keyDataAccess.GetAll()));
+			return _keyDataAccess.GetAll();
 		}
 		catch (Exception ex)
 		{
