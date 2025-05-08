@@ -12,7 +12,7 @@ public class AuthentikController : ControllerBase, IActionFilter
 	{
 		IHeaderDictionary? headers = context.HttpContext.Request.Headers;
 
-		if (!IsAllowedDevice(headers, out string? deviceName))
+		if (!IsAllowedDevice(context.HttpContext, headers, out string? deviceName))
 		{
 			context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
 			context.Result = new UnauthorizedResult();
@@ -23,9 +23,9 @@ public class AuthentikController : ControllerBase, IActionFilter
 
 	public void OnActionExecuted(ActionExecutedContext context) { }
 	
-	private static bool IsAllowedDevice(IHeaderDictionary headers, out string? deviceName)
+	private static bool IsAllowedDevice(HttpContext context, IHeaderDictionary headers, out string? deviceName)
 	{
-		deviceName = "debugPlaceholder";
+		deviceName = "system";
             
 		try
 		{
@@ -34,6 +34,15 @@ public class AuthentikController : ControllerBase, IActionFilter
 #endif
 			// ReSharper disable once HeuristicUnreachableCode
 #pragma warning disable CS0162 // Unreachable code detected
+			
+			string? remoteIp = context.Connection.RemoteIpAddress?.ToString();
+			
+			if (remoteIp == null)
+				return false;
+			
+			if (remoteIp == "127.0.0.1" || remoteIp == "::1" || remoteIp.StartsWith("172.17.0.1"))
+				return true;
+			
 			deviceName = headers["X-Authentik-Username"].ToString();
                 
 			// We don't need to further validate this, because all incoming traffic is being routed through authentik anyways, so this is secure enough.
