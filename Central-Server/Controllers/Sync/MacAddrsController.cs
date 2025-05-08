@@ -21,17 +21,17 @@ public class MacAddrsController : ControllerBase
 	
 	
 	[HttpGet("lastUpdate")]
-	public IActionResult LastMacAddressUpdate()
+	public ActionResult<DateTime> LastMacAddressUpdate()
 	{
-		return Content(_macAddrAccess.GetLastChanged().ToString("dd.MM.yyyy HH:mm:ss"));
+		return _macAddrAccess.GetLastChanged();
 	}
 
 	[HttpGet("all")]
-	public IActionResult SyncMacAddresses()
+	public ActionResult<List<string>> SyncMacAddresses()
 	{
 		try
 		{
-			return Content(JsonSerializer.Serialize(_macAddrAccess.GetAll()));
+			return _macAddrAccess.GetAll();
 		}
 		catch (Exception ex)
 		{
