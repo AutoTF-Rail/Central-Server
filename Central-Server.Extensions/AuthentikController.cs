@@ -41,6 +41,7 @@ public class AuthentikController : ControllerBase, IActionFilter
 			
 			if (ip is not null)
 			{
+				ip = ip.MapToIPv4();
 				byte[] bytes = ip.GetAddressBytes();
     
 				if (ip.AddressFamily == AddressFamily.InterNetwork)
