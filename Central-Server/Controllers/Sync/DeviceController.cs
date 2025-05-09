@@ -15,11 +15,13 @@ namespace Central_Server.Controllers.Sync;
 public class DeviceController : AuthentikController
 {
 	private readonly DeviceDataAccess _deviceDataAccess;
+	private readonly FileAccess _fileAccess;
 	private readonly Logger _logger;
 
-	public DeviceController(DeviceDataAccess deviceDataAccess, Logger logger)
+	public DeviceController(DeviceDataAccess deviceDataAccess, FileAccess fileAccess, Logger logger)
 	{
 		_deviceDataAccess = deviceDataAccess;
+		_fileAccess = fileAccess;
 		_logger = logger;
 	}
 	
@@ -72,9 +74,18 @@ public class DeviceController : AuthentikController
 		return _deviceDataAccess.GetAllTrains().Count;
 	}
 	
+	[HttpGet("allowedTrainsCount")]
+	public ActionResult<int> AllowedTrainCount()
+	{
+		return _fileAccess.GetAllowedTrainsCount();
+	}
+	
 	[HttpPost("addTrain")]
 	public IActionResult AddTrain([FromBody] AddTrainBody body)
 	{
+		if (_deviceDataAccess.GetAllTrains().Count >= _fileAccess.GetAllowedTrainsCount())
+			return Problem("Maximum limit of allowed trains has been reached.");
+		
 		_logger.Log($"Creating new train as {body.TrainName} with authentik username {body.AuthentikUsername} and train ID {body.TrainId}.");
 		
 		_deviceDataAccess.CreateTrain(body.TrainName, body.AuthentikUsername, body.TrainId);

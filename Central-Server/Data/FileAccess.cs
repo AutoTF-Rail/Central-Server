@@ -8,6 +8,7 @@ public class FileAccess
 
 	private readonly string _evuName;
 	private readonly string _containerName;
+	private readonly int _allowedTrains;
 	
 	public FileAccess()
 	{
@@ -20,12 +21,20 @@ public class FileAccess
 		_evuName = Environment.GetEnvironmentVariable("evuName") ?? "UnknownEVU";
 		_containerName = Environment.GetEnvironmentVariable("containerName") ?? "UnknownEVU";
 		
+		if(!int.TryParse(Environment.GetEnvironmentVariable("allowedTrainsCount"), out _allowedTrains))
+			_allowedTrains = 0;
+		
 		Directory.CreateDirectory(_dataDir);
 	}
 
 	public string GetEvuName()
 	{
 		return _evuName;
+	}
+
+	public int GetAllowedTrainsCount()
+	{
+		return _allowedTrains;
 	}
 	
 	public bool ReadFile(string fileName, out string content)
