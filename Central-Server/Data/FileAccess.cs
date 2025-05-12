@@ -1,5 +1,3 @@
-using AutoTf.Logging;
-
 namespace Central_Server.Data;
 
 public class FileAccess
@@ -8,7 +6,6 @@ public class FileAccess
 
 	private readonly string _evuName;
 	private readonly string _containerName;
-	private readonly int _allowedTrains;
 	
 	public FileAccess()
 	{
@@ -20,9 +17,14 @@ public class FileAccess
 		// UnknownEVU should pretty much just never happen, unless someone fucked up and misconfigured the container.
 		_evuName = Environment.GetEnvironmentVariable("evuName") ?? "UnknownEVU";
 		_containerName = Environment.GetEnvironmentVariable("containerName") ?? "UnknownEVU";
-		
-		if(!int.TryParse(Environment.GetEnvironmentVariable("allowedTrainsCount"), out _allowedTrains))
-			_allowedTrains = 0;
+
+		if (!ReadFile("allowedTrainsCount", out _))
+		{
+			if (int.TryParse(Environment.GetEnvironmentVariable("allowedTrainsCount"), out int allowedTrainsInt))
+			{
+				WriteAllText("allowedTrainsCount", allowedTrainsInt.ToString());
+			}
+		}
 		
 		Directory.CreateDirectory(_dataDir);
 	}
@@ -34,13 +36,14 @@ public class FileAccess
 
 	public int GetAllowedTrainsCount()
 	{
-		return _allowedTrains;
+		return Convert.ToInt32(ReadFile("allowedTrainsCount"));
 	}
 	
 	public bool ReadFile(string fileName, out string content)
 	{
 		content = "";
 		string path = Path.Combine(_dataDir, fileName);
+		
 		if (!File.Exists(path))
 			return false;
 
